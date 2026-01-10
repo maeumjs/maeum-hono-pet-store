@@ -1,0 +1,29 @@
+{
+  "endpoint": {
+    "pokeapi": "https://pokeapi.co"
+  },
+  // database connection configuration
+  "mysql": {
+    "pet-store": {
+      "type": "mysql",
+      "host": "localhost",
+      "port": 9301,
+      "database": "pet_store",
+      "username": "",
+      "password": "",
+      "poolSize": 10,
+      "queue": 10
+    }
+  },
+  // application configuration
+  "server": {
+    "runMode": "local",
+    "envMode": "production",
+    "hostHash": "none",
+    "logLevel": "debug",
+    "caller": "maeum",
+    "port": 7878,
+    "swaggerHost": "localhost:7878",
+    "monitor": {}
+  }
+}

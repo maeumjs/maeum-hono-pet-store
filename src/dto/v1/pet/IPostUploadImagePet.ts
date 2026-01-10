@@ -1,0 +1,28 @@
+import type { IImageEntity } from '#/databases/interfaces/IImageEntity';
+import type { IPetEntity } from '#/databases/interfaces/IPetEntity';
+import type { ITid } from '#/dto/common/ITid';
+import type { TFileUpload } from '#/dto/common/TFileUpload';
+import type { MultipartFile } from '@fastify/multipart';
+
+export interface IPostUploadImagePetQuerystringDto extends ITid {}
+
+export interface IPostUploadImagePetParamDto {
+  id: IPetEntity['id'];
+}
+
+export interface IPostUploadImagePetBodyDto {
+  additionalMetadata: IImageEntity['metadata'];
+
+  file: TFileUpload;
+}
+
+/**
+ * @schema-nozzle-exclude-next
+ */
+export interface IPostUploadImagePetBodyMultipartDto {
+  additionalMetadata: IImageEntity['metadata'];
+
+  file: TFileUpload;
+
+  $file: MultipartFile;
+}
