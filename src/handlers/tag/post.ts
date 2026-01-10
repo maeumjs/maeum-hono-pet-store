@@ -1,8 +1,11 @@
-import { create } from '#/databases/repository/tag';
-import type { IPostTagBodyDto, IPostTagQuerystringDto } from '#/dto/v1/tag/IPostTag';
 import { ApiErrorJsonSchema, ApiValidationErrorJsonSchema } from '@maeum/error-controller';
-import type { FastifyRequest, RouteShorthandOptions } from 'fastify';
 import httpStatusCodes from 'http-status-codes';
+
+import { create } from '#/databases/repository/tag';
+
+import type { FastifyRequest, RouteShorthandOptions } from 'fastify';
+
+import type { IPostTagBodyDto, IPostTagQuerystringDto } from '#/dto/v1/tag/IPostTag';
 
 export const option: RouteShorthandOptions = {
   schema: {

@@ -1,5 +1,6 @@
-import { getAsyncStore } from '#/modules/loggings/stores/getAsyncStore';
 import { randomUUID } from 'node:crypto';
+
+import { getAsyncStore } from '#/modules/loggings/stores/getAsyncStore';
 
 export function getAsyncTid(): string {
   const store = getAsyncStore();

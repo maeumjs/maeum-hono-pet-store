@@ -1,8 +1,11 @@
-import { del } from '#/databases/repository/tag';
-import type { IDeleteTagParamsDto, IDeleteTagQuerystringDto } from '#/dto/v1/tag/IDeleteTag';
 import { ApiErrorJsonSchema, ApiValidationErrorJsonSchema } from '@maeum/error-controller';
-import type { FastifyRequest, RouteShorthandOptions } from 'fastify';
 import httpStatusCodes from 'http-status-codes';
+
+import { del } from '#/databases/repository/tag';
+
+import type { FastifyRequest, RouteShorthandOptions } from 'fastify';
+
+import type { IDeleteTagParamsDto, IDeleteTagQuerystringDto } from '#/dto/v1/tag/IDeleteTag';
 
 export const option: RouteShorthandOptions = {
   schema: {

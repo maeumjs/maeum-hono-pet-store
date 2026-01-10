@@ -1,13 +1,16 @@
-import { read } from '#/databases/repository/tag';
-import type { IGetTagParamsDto, IGetTagQuerystringDto } from '#/dto/v1/tag/IGetTag';
 import {
   ApiError,
   ApiErrorJsonSchema,
   ApiValidationErrorJsonSchema,
 } from '@maeum/error-controller';
+import httpStatusCodes from 'http-status-codes';
+
+import { read } from '#/databases/repository/tag';
+
 import type { II18nParameters } from '@maeum/i18n-controller';
 import type { FastifyRequest, RouteShorthandOptions } from 'fastify';
-import httpStatusCodes from 'http-status-codes';
+
+import type { IGetTagParamsDto, IGetTagQuerystringDto } from '#/dto/v1/tag/IGetTag';
 
 export const option: RouteShorthandOptions = {
   schema: {

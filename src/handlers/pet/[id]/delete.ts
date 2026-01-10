@@ -1,12 +1,15 @@
-import { deleteById } from '#/databases/repository/v1/pet/deleteById';
-import { selectById } from '#/databases/repository/v1/pet/selectById';
-import type { IDeletePetParamsDto, IDeletePetQuerystringDto } from '#/dto/v1/pet/IDeletePet';
 import {
   ApiError,
   ApiErrorJsonSchema,
   ApiValidationErrorJsonSchema,
 } from '@maeum/error-controller';
+
+import { deleteById } from '#/databases/repository/v1/pet/deleteById';
+import { selectById } from '#/databases/repository/v1/pet/selectById';
+
 import type { FastifyRequest, RouteShorthandOptions } from 'fastify';
+
+import type { IDeletePetParamsDto, IDeletePetQuerystringDto } from '#/dto/v1/pet/IDeletePet';
 
 export const option: RouteShorthandOptions = {
   schema: {

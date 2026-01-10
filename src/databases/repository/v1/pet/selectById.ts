@@ -1,6 +1,5 @@
 import { CE_ENTITY_NAME } from '#/databases/const-enum/CE_ENTITY_NAME';
 import { PetEntity } from '#/databases/entities/PetEntity';
-import type { IPetEntity, IPetRelation } from '#/databases/interfaces/IPetEntity';
 import { where } from '#/databases/modules/where';
 import { selectByIds as selectCategoryByIds } from '#/databases/repository/v1/categories/selectByIds';
 import { selectByPetId as selectCategoryMtMByPetId } from '#/databases/repository/v1/pet/category-mtm/selectByPetId';
@@ -9,6 +8,8 @@ import { selectByIds as selectTagByIds } from '#/databases/repository/v1/tags/se
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
 import { getAsyncTid } from '#/modules/loggings/stores/getAsyncTid';
+
+import type { IPetEntity, IPetRelation } from '#/databases/interfaces/IPetEntity';
 
 export async function selectById(
   data: { id: IPetEntity['id'] },

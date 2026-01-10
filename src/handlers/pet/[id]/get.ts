@@ -1,13 +1,16 @@
-import { selectById } from '#/databases/repository/v1/pet/selectById';
-import type { IGetPetParamsDto, IGetPetQuerystringDto } from '#/dto/v1/pet/IGetPet';
 import {
   ApiError,
   ApiErrorJsonSchema,
   ApiValidationErrorJsonSchema,
 } from '@maeum/error-controller';
+import httpStatusCodes from 'http-status-codes';
+
+import { selectById } from '#/databases/repository/v1/pet/selectById';
+
 import type { II18nParameters } from '@maeum/i18n-controller';
 import type { FastifyRequest, RouteShorthandOptions } from 'fastify';
-import httpStatusCodes from 'http-status-codes';
+
+import type { IGetPetParamsDto, IGetPetQuerystringDto } from '#/dto/v1/pet/IGetPet';
 
 export const option: RouteShorthandOptions = {
   schema: {

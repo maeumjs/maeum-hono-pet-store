@@ -1,8 +1,12 @@
+import { writeFileSync } from 'node:fs';
+
+import { CE_DI as LOGGING_CONTROLLER } from '@maeum/logging-controller';
+
 import { getPort } from '#/configs/modules/getPort';
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
-import { CE_DI as LOGGING_CONTROLLER, type WinstonLoggers } from '@maeum/logging-controller';
-import { writeFileSync } from 'fs';
+
+import type { WinstonLoggers } from '@maeum/logging-controller';
 
 export function listen() {
   const config = container.resolve(CE_DI.CONFIG);

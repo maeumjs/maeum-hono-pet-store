@@ -1,10 +1,14 @@
-import { container } from '#/modules/di/container';
+import { createServer } from 'node:http';
+
 import { CE_DI as SCHEMA_CONTROLLER } from '@maeum/schema-controller';
 import { getGenReqID } from '@maeum/tools';
-import type { FastifyServerOptions } from 'fastify';
 import fastify from 'fastify';
+
+import { container } from '#/modules/di/container';
+
 import type { IncomingMessage, Server, ServerResponse } from 'node:http';
-import { createServer } from 'node:http';
+
+import type { FastifyServerOptions } from 'fastify';
 
 type THttpServerFactory = (
   handler: (req: IncomingMessage, res: ServerResponse) => void,

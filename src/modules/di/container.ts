@@ -1,5 +1,6 @@
-import type { IClassContainer } from '@maeum/tools';
 import { asValue, createContainer } from 'awilix';
+
+import type { IClassContainer } from '@maeum/tools';
 
 const $container = createContainer();
 

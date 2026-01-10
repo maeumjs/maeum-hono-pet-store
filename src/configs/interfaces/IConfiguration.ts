@@ -1,6 +1,7 @@
+import type { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions.js';
+
 import type { TEndpoint } from '#/configs/interfaces/IEndpoint';
 import type { IServer } from '#/configs/interfaces/IServer';
-import type { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions.js';
 
 /** 서버 설정 */
 export interface IConfiguration {

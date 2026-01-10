@@ -1,10 +1,12 @@
-import type { IAsyncStore } from '#/servers/interfaces/IAsyncStore';
 import { executionAsyncResource } from 'node:async_hooks';
 
+import type { IAsyncStore } from '#/servers/interfaces/IAsyncStore';
+
 export function getAsyncStore() {
-  const acquiredExecutionAsyncResource = executionAsyncResource() as {
-    [key: string | symbol]: unknown;
-  };
+  const acquiredExecutionAsyncResource = executionAsyncResource() as Record<
+    string | symbol,
+    unknown
+  >;
   const keys = Object.getOwnPropertySymbols(acquiredExecutionAsyncResource);
   const store = keys
     .map((key) => acquiredExecutionAsyncResource[key])

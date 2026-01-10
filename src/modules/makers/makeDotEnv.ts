@@ -1,6 +1,8 @@
-import { getRunMode } from '#/configs/modules/getRunMode';
+import path from 'node:path';
+
 import { config } from 'dotenv';
-import path from 'path';
+
+import { getRunMode } from '#/configs/modules/getRunMode';
 
 export function makeDotEnv() {
   const runMode = getRunMode(process.env.RUN_MODE);

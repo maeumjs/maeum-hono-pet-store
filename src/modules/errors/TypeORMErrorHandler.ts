@@ -1,12 +1,11 @@
-import { container } from '#/modules/di/container';
-import {
-  HTTPErrorHandler,
-  getSourceLocation,
-  type THTTPErrorHandlerParameters,
-} from '@maeum/error-controller';
+import { getSourceLocation, HTTPErrorHandler } from '@maeum/error-controller';
 import { CE_DI as TOOLS } from '@maeum/tools';
 import { isError } from 'my-easy-fp';
 import { QueryFailedError, TypeORMError } from 'typeorm';
+
+import { container } from '#/modules/di/container';
+
+import type { THTTPErrorHandlerParameters } from '@maeum/error-controller';
 
 export class TypeORMErrorHandler extends HTTPErrorHandler {
   /* eslint-disable-next-line class-methods-use-this */

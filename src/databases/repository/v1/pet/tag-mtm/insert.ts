@@ -1,10 +1,12 @@
 import { PetTagMTMEntity } from '#/databases/entities/PetTagMTMEntity';
-import type { IPetTagMTMEntity } from '#/databases/interfaces/IPetTagMTMEntity';
 import { getInsertedIdOrThrow } from '#/databases/modules/getInsertedId';
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
 import { getAsyncTid } from '#/modules/loggings/stores/getAsyncTid';
+
 import type { EntityManager } from 'typeorm';
+
+import type { IPetTagMTMEntity } from '#/databases/interfaces/IPetTagMTMEntity';
 
 export async function insert(
   data: { values: IPetTagMTMEntity },

@@ -1,24 +1,29 @@
-import { CE_RUN_MODE } from '#/configs/const-enum/CE_RUN_MODE';
-import routeMap from '#/handlers/route-map';
-import { CronErrorHandler } from '#/modules/errors/CronErrorHandler';
-import { TypeORMErrorHandler } from '#/modules/errors/TypeORMErrorHandler';
-import type { IErrorControllerOption } from '@maeum/error-controller';
-import {
-  CE_DI as I18N_CONTROLLER,
-  type II18nContainerOptions,
-  type II18nParameters,
-} from '@maeum/i18n-controller';
+import path from 'node:path';
+
+import { CE_DI as I18N_CONTROLLER } from '@maeum/i18n-controller';
 import {
   CE_LOGGING_ACTION_CODE,
   getRoutePathKey,
   makeWinstonConsoleTransport,
   makeWinstonFileTransport,
-  type IMaeumSyncLoggersWithWinstonOptions,
 } from '@maeum/logging-controller';
-import type { ISchemaControllerBootstrapOption } from '@maeum/schema-controller';
-import { getCwd, type IClassContainer } from '@maeum/tools';
+import { getCwd } from '@maeum/tools';
 import ajvFormat from 'ajv-formats';
-import path from 'node:path';
+
+import { CE_RUN_MODE } from '#/configs/const-enum/CE_RUN_MODE';
+import { CronErrorHandler } from '#/modules/errors/CronErrorHandler';
+
+import { TypeORMErrorHandler } from '#/modules/errors/TypeORMErrorHandler';
+import routeMap from '#/handlers/route-map';
+import type {II18nContainerOptions, II18nParameters} from '@maeum/i18n-controller';
+
+
+
+import type { IErrorControllerOption } from '@maeum/error-controller';
+import type { IMaeumSyncLoggersWithWinstonOptions } from '@maeum/logging-controller';
+import type { ISchemaControllerBootstrapOption } from '@maeum/schema-controller';
+import type { IClassContainer } from '@maeum/tools';
+
 import { getRunMode } from './modules/getRunMode';
 
 export function getServerBootstrapOptions(container: IClassContainer) {
@@ -33,9 +38,7 @@ export function getServerBootstrapOptions(container: IClassContainer) {
         formats: {
           binary: {
             type: 'string',
-            validate: () => {
-              return true;
-            },
+            validate: () => true,
           },
           byte: { type: 'string', validate: () => true },
           int64: { type: 'number', validate: () => true },

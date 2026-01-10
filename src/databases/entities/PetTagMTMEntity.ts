@@ -1,7 +1,9 @@
+import { EntitySchema } from 'typeorm';
+
 import { PrimaryKey } from '#/databases/columns/PrimaryKey';
 import { CE_ENTITY_NAME } from '#/databases/const-enum/CE_ENTITY_NAME';
+
 import type { IPetTagMTMEntity } from '#/databases/interfaces/IPetTagMTMEntity';
-import { EntitySchema } from 'typeorm';
 
 /**
  * pet and tag many-to-many relation

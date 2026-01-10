@@ -1,7 +1,9 @@
-import { selectById } from '#/databases/repository/v1/categories/selectById';
 import { ApiError } from '@maeum/error-controller';
-import type { II18nParameters } from '@maeum/i18n-controller';
 import httpStatusCodes from 'http-status-codes';
+
+import { selectById } from '#/databases/repository/v1/categories/selectById';
+
+import type { II18nParameters } from '@maeum/i18n-controller';
 
 export async function selectByIdOrThrow(
   data: Parameters<typeof selectById>[0],

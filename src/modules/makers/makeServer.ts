@@ -1,20 +1,26 @@
-import route from '#/handlers/route';
-import { CE_DI } from '#/modules/di/CE_DI';
-import { container } from '#/modules/di/container';
-import { CE_SERVER_DEFAULT_VALUE } from '#/servers/const-enum/CE_SERVER_DEFAULT_VALUE';
-import { fastifyOptionFactory } from '#/servers/fastifyOptionFactory';
-import type { IAsyncStore } from '#/servers/interfaces/IAsyncStore';
-import { swaggerConfig } from '#/servers/plugin/swaggerConfig';
-import { swaggerUiConfig } from '#/servers/plugin/swaggerUiConfig';
+import { AsyncResource, executionAsyncId } from 'node:async_hooks';
+
 import fastifyCors from '@fastify/cors';
+
+
+import { swaggerUiConfig } from '#/servers/plugin/swaggerUiConfig';
+
 import fastifyMultipart from '@fastify/multipart';
 import { fastifyRequestContext } from '@fastify/request-context';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastifyUrlData from '@fastify/url-data';
 import { getFastifyHandler } from '@maeum/error-controller';
-import { CE_DI as LOGGING_CONTROLLER, type RequestLogger } from '@maeum/logging-controller';
-import { AsyncResource, executionAsyncId } from 'node:async_hooks';
+import { CE_DI as LOGGING_CONTROLLER } from '@maeum/logging-controller';
+import { CE_DI } from '#/modules/di/CE_DI';
+import { container } from '#/modules/di/container';
+import { CE_SERVER_DEFAULT_VALUE } from '#/servers/const-enum/CE_SERVER_DEFAULT_VALUE';
+import { fastifyOptionFactory } from '#/servers/fastifyOptionFactory';
+import { swaggerConfig } from '#/servers/plugin/swaggerConfig';
+import route from '#/handlers/route';
+
+import type { RequestLogger } from '@maeum/logging-controller';
+import type { IAsyncStore } from '#/servers/interfaces/IAsyncStore';
 
 export async function makeServer() {
   const config = container.resolve(CE_DI.CONFIG);

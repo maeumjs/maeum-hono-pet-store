@@ -1,7 +1,9 @@
+import { EntitySchema } from 'typeorm';
+
 import { PrimaryKey } from '#/databases/columns/PrimaryKey';
 import { CE_ENTITY_NAME } from '#/databases/const-enum/CE_ENTITY_NAME';
+
 import type { ICategoryEntity, ICategoryRelation } from '#/databases/interfaces/ICategoryEntity';
-import { EntitySchema } from 'typeorm';
 
 export const CategoryEntity = new EntitySchema<ICategoryEntity & ICategoryRelation>({
   name: CE_ENTITY_NAME.CATEGORY,

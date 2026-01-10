@@ -1,14 +1,18 @@
-import type { IConfiguration } from '#/configs/interfaces/IConfiguration';
+import fs from 'node:fs';
+import path from 'node:path';
+
+import { CE_DI as SCHEMA_CONTROLLER } from '@maeum/schema-controller';
+import { getCwd } from '@maeum/tools';
+import { parse } from 'jsonc-parser';
+import { isFalse } from 'my-easy-fp';
+
 import { getRunMode } from '#/configs/modules/getRunMode';
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
-import { CE_DI as SCHEMA_CONTROLLER } from '@maeum/schema-controller';
-import { getCwd } from '@maeum/tools';
+
 import type { ValidateFunction } from 'ajv';
-import { parse } from 'jsonc-parser';
-import { isFalse } from 'my-easy-fp';
-import fs from 'node:fs';
-import path from 'node:path';
+
+import type { IConfiguration } from '#/configs/interfaces/IConfiguration';
 
 export async function makeConfig() {
   const ajvContainer = container.resolve(SCHEMA_CONTROLLER.AJV);

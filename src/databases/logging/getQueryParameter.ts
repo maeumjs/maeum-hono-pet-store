@@ -1,6 +1,7 @@
-import { quoting } from '#/databases/logging/quoting';
 import { safeStringify } from '@maeum/tools';
 import { lightFormat } from 'date-fns';
+
+import { quoting } from '#/databases/logging/quoting';
 
 export function getQueryParameter(parameter: unknown): string {
   switch (typeof parameter) {

@@ -1,9 +1,10 @@
 import { PetEntity } from '#/databases/entities/PetEntity';
-import type { IPetEntity } from '#/databases/interfaces/IPetEntity';
 import { where } from '#/databases/modules/where';
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
 import { getAsyncTid } from '#/modules/loggings/stores/getAsyncTid';
+
+import type { IPetEntity } from '#/databases/interfaces/IPetEntity';
 
 export async function deleteById(data: { id: IPetEntity['id'] }) {
   const tid = getAsyncTid();

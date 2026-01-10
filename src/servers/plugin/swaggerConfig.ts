@@ -1,5 +1,6 @@
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
+
 import type { FastifyDynamicSwaggerOptions, JSONObject } from '@fastify/swagger';
 
 function getReferenceId(json: JSONObject, index: number): string {

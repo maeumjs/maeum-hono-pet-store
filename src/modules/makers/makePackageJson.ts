@@ -1,8 +1,11 @@
-import { CE_DI } from '#/modules/di/CE_DI';
-import { container } from '#/modules/di/container';
-import { parse } from 'jsonc-parser';
 import fs from 'node:fs';
 import path from 'node:path';
+
+import { parse } from 'jsonc-parser';
+
+import { CE_DI } from '#/modules/di/CE_DI';
+import { container } from '#/modules/di/container';
+
 import type { PackageJson as PackageJsonType } from 'type-fest';
 
 export function makePackageJson() {

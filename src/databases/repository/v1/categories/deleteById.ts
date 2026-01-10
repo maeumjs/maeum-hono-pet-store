@@ -1,9 +1,10 @@
 import { CategoryEntity } from '#/databases/entities/CategoryEntity';
-import type { ICategoryEntity } from '#/databases/interfaces/ICategoryEntity';
 import { where } from '#/databases/modules/where';
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
 import { getAsyncTid } from '#/modules/loggings/stores/getAsyncTid';
+
+import type { ICategoryEntity } from '#/databases/interfaces/ICategoryEntity';
 
 export async function deleteById(data: { id: ICategoryEntity['id'] }) {
   const tid = getAsyncTid();

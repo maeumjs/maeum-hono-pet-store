@@ -1,13 +1,14 @@
-import { getServerBootstrapOptions } from '#/configs/ServerBootstrapOptions';
-import { container } from '#/modules/di/container';
-import { makeConfig } from '#/modules/makers/makeConfig';
-import { makeDotEnv } from '#/modules/makers/makeDotEnv';
-import { makePackageJson } from '#/modules/makers/makePackageJson';
 import { makeErrorController } from '@maeum/error-controller';
 import { makeAsyncI18nContainer } from '@maeum/i18n-controller';
 import { makeSyncLoggers } from '@maeum/logging-controller';
 import { makeAsyncSchemaController } from '@maeum/schema-controller';
 import { makeEncryptioner } from '@maeum/tools';
+
+import { getServerBootstrapOptions } from '#/configs/ServerBootstrapOptions';
+import { container } from '#/modules/di/container';
+import { makeConfig } from '#/modules/makers/makeConfig';
+import { makeDotEnv } from '#/modules/makers/makeDotEnv';
+import { makePackageJson } from '#/modules/makers/makePackageJson';
 
 /**
  * 초기화 순서를 지켜주세요,

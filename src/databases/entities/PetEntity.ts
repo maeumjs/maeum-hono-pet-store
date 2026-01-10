@@ -1,7 +1,9 @@
+import { EntitySchema } from 'typeorm';
+
 import { PrimaryKey } from '#/databases/columns/PrimaryKey';
 import { CE_ENTITY_NAME } from '#/databases/const-enum/CE_ENTITY_NAME';
+
 import type { IPetEntity, IPetRelation } from '#/databases/interfaces/IPetEntity';
-import { EntitySchema } from 'typeorm';
 
 export const PetEntity = new EntitySchema<IPetEntity & IPetRelation>({
   name: CE_ENTITY_NAME.PET,

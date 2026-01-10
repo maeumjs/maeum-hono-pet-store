@@ -1,10 +1,11 @@
 import { CE_ENTITY_NAME } from '#/databases/const-enum/CE_ENTITY_NAME';
 import { PetTagMTMEntity } from '#/databases/entities/PetTagMTMEntity';
-import type { IPetEntity } from '#/databases/interfaces/IPetEntity';
 import { where } from '#/databases/modules/where';
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
 import { getAsyncTid } from '#/modules/loggings/stores/getAsyncTid';
+
+import type { IPetEntity } from '#/databases/interfaces/IPetEntity';
 
 export async function selectByPetId(
   data: { petId: IPetEntity['id'] },

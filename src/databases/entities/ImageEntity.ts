@@ -1,9 +1,11 @@
+import { EntitySchema } from 'typeorm';
+
 import { CreatedAt } from '#/databases/columns/CreatedAt';
 import { PrimaryKey } from '#/databases/columns/PrimaryKey';
 import { UpdatedAt } from '#/databases/columns/UpdatedAt';
 import { CE_ENTITY_NAME } from '#/databases/const-enum/CE_ENTITY_NAME';
+
 import type { IImageEntity } from '#/databases/interfaces/IImageEntity';
-import { EntitySchema } from 'typeorm';
 
 export const ImageEntity = new EntitySchema<IImageEntity>({
   name: CE_ENTITY_NAME.IMAGE,

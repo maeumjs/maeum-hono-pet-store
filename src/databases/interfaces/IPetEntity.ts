@@ -1,8 +1,8 @@
 import type { CE_ENTITY_NAME } from '#/databases/const-enum/CE_ENTITY_NAME';
+import type { CE_PET_STATUS } from '#/databases/interfaces/const-enum/CE_PET_STATUS';
 import type { IBaseEntity } from '#/databases/interfaces/IBaseEntity';
 import type { ICategoryEntity } from '#/databases/interfaces/ICategoryEntity';
 import type { ITagEntity } from '#/databases/interfaces/ITagEntity';
-import type { CE_PET_STATUS } from '#/databases/interfaces/const-enum/CE_PET_STATUS';
 
 export interface IPetEntity {
   id: IBaseEntity['id'];

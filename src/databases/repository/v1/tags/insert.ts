@@ -1,10 +1,12 @@
 import { TagEntity } from '#/databases/entities/TagEntity';
-import type { ICategoryEntity } from '#/databases/interfaces/ICategoryEntity';
 import { getInsertedIdOrThrow } from '#/databases/modules/getInsertedId';
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
 import { getAsyncTid } from '#/modules/loggings/stores/getAsyncTid';
+
 import type { EntityManager } from 'typeorm';
+
+import type { ICategoryEntity } from '#/databases/interfaces/ICategoryEntity';
 
 export async function insert(
   data: { values: Omit<ICategoryEntity, 'id'> },

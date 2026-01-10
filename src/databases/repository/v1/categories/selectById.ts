@@ -1,11 +1,13 @@
+import { raw } from 'mysql2';
+
 import { CE_ENTITY_NAME } from '#/databases/const-enum/CE_ENTITY_NAME';
 import { CategoryEntity } from '#/databases/entities/CategoryEntity';
-import type { ICategoryEntity } from '#/databases/interfaces/ICategoryEntity';
 import { where } from '#/databases/modules/where';
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
 import { getAsyncTid } from '#/modules/loggings/stores/getAsyncTid';
-import { raw } from 'mysql2';
+
+import type { ICategoryEntity } from '#/databases/interfaces/ICategoryEntity';
 
 export async function selectById(
   data: { id: ICategoryEntity['id'] },

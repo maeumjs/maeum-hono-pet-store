@@ -65,7 +65,7 @@ import type { InsertResult } from 'typeorm';
 export function getInsertedId<T = string | number>(result: InsertResult): T | undefined {
   if (result.identifiers.length > 0) {
     const objectLiteral = result.identifiers.at(0);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     const id = objectLiteral != null ? objectLiteral.id : undefined;
 
     if (id != null) {
@@ -73,7 +73,6 @@ export function getInsertedId<T = string | number>(result: InsertResult): T | un
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { insertId } = result.raw;
   if (insertId != null) {
     return insertId as T;

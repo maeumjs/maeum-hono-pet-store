@@ -1,13 +1,16 @@
 /* eslint-disable class-methods-use-this */
 
+import { CE_DI as LOGGING_CONTROLLER } from '@maeum/logging-controller';
+import httpStatusCodes from 'http-status-codes';
+import { isError, isFalse } from 'my-easy-fp';
+import { AbstractLogger } from 'typeorm';
+
 import { getEvaluateQuery } from '#/databases/logging/getEvaluateQuery';
 import { container } from '#/modules/di/container';
 import { CE_LOG_ID } from '#/modules/loggings/const-enum/CE_LOG_ID';
 import { getAsyncTid } from '#/modules/loggings/stores/getAsyncTid';
-import { CE_DI as LOGGING_CONTROLLER } from '@maeum/logging-controller';
-import httpStatusCodes from 'http-status-codes';
-import { isError, isFalse } from 'my-easy-fp';
-import { AbstractLogger, type LogLevel, type LogMessage, type QueryRunner } from 'typeorm';
+
+import type { LogLevel, LogMessage, QueryRunner } from 'typeorm';
 
 const log = container.resolve(LOGGING_CONTROLLER.WINSTON_LOGGERS).l(import.meta.filename);
 
@@ -15,7 +18,7 @@ export class TypeORMLogger extends AbstractLogger {
   protected writeLog(
     _level: LogLevel,
     _message: string | number | LogMessage | (string | number | LogMessage)[],
-    _queryRunner?: QueryRunner | undefined,
+    _queryRunner?: QueryRunner,
   ): void {}
 
   /**

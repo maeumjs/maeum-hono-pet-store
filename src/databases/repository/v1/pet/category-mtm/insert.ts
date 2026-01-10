@@ -1,10 +1,12 @@
 import { PetCategoryMTMEntity } from '#/databases/entities/PetCategoryMTMEntity';
-import type { IPetCategoryMTMEntity } from '#/databases/interfaces/IPetCategoryMTMEntity';
 import { getInsertedIdOrThrow } from '#/databases/modules/getInsertedId';
 import { CE_DI } from '#/modules/di/CE_DI';
 import { container } from '#/modules/di/container';
 import { getAsyncTid } from '#/modules/loggings/stores/getAsyncTid';
+
 import type { EntityManager } from 'typeorm';
+
+import type { IPetCategoryMTMEntity } from '#/databases/interfaces/IPetCategoryMTMEntity';
 
 export async function insert(
   data: { values: IPetCategoryMTMEntity },
