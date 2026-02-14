@@ -40,14 +40,7 @@ export const customOverrideImportXPlugin = [
     },
   },
   {
-    files: ['src/app/**/*.tsx'],
-    rules: {
-      'import-x/prefer-default-export': ['error'],
-      'import-x/no-default-export': ['off'],
-    },
-  },
-  {
-    files: ['next.config.ts', 'vitest.config.{ts,mts}', 'postcss.config.mjs'],
+    files: ['vitest.config.{ts,mts}'],
     rules: {
       'import-x/prefer-default-export': ['error'],
       'import-x/no-default-export': ['off'],
@@ -89,7 +82,7 @@ export const customOverrideEslintRule = [
     },
   },
   {
-    files: ['vitest.config.mts', 'eslint.config.mjs', 'eslint.custom.config.mjs'],
+    files: ['vitest.config.mts', 'eslint.config.mjs', 'eslint.config.custom.mjs'],
     rules: {
       'import-x/no-extraneous-dependencies': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
@@ -122,7 +115,7 @@ export const customOverrideEslintRule = [
     },
   },
   {
-    files: ['**/*.spec.ts', '**/*.spec.tsx'],
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
     rules: {
       '@typescript-eslint/no-unsafe-assignment': 'off',
       'import-x/no-extraneous-dependencies': 'off',

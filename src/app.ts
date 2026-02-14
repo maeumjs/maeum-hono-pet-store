@@ -1,16 +1,21 @@
+import { serve } from '@hono/node-server';
 import { isError } from 'my-easy-fp';
 
-import { makeCron } from '#/modules/makers/makeCron';
-import { makePetDataSoruce } from '#/modules/makers/makePetDataSoruce';
-import { makeServer } from '#/modules/makers/makeServer';
-import { listen } from '#/servers/listen';
+import { routing } from '#/handlers/route';
+import { container } from '#/loader';
 
 async function app() {
-  makeCron();
-  await makeServer();
-  await makePetDataSoruce();
+  routing();
 
-  listen();
+  serve(
+    {
+      fetch: container.app.fetch,
+      port: container.config.server.port,
+    },
+    (info) => {
+      console.log('Server start: ', info.address, container.config.server.port);
+    },
+  );
 }
 
 app().catch((caught) => {

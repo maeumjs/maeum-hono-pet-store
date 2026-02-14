@@ -8,8 +8,9 @@
     "src/**/*.ts",
     "scripts/**/*.cjs",
     "scripts/**/*.ts",
-    ".eslintrc.cjs",
+    "eslint.config.mjs",
+    "eslint.config.custom.mjs",
     "resources/**/*.json"
   ],
-  "exclude": ["tsconfig.json", "tsconfig.eslint.json", "tsconfig.prod.json", "jest.config.js"]
+  "exclude": ["tsconfig.json", "tsconfig.eslint.json", "tsconfig.prod.json"]
 }

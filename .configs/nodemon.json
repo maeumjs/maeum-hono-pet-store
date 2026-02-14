@@ -12,6 +12,7 @@
   "ignore": [
     "*.test.ts"
   ],
+  "delay": "1500ms",
   "env": {
     "DEBUG": "maeum:*",
     "RUN_MODE": "local",

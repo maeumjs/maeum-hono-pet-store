@@ -1,8 +1,9 @@
+// eslint-disable-next-line n/no-unsupported-features/node-builtins
 import { executionAsyncResource } from 'node:async_hooks';
 
 import type { IAsyncStore } from '#/servers/interfaces/IAsyncStore';
 
-export function getAsyncStore() {
+export function getAsyncStore(): IAsyncStore | undefined {
   const acquiredExecutionAsyncResource = executionAsyncResource() as Record<
     string | symbol,
     unknown
