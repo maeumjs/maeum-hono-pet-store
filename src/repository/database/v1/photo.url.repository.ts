@@ -9,7 +9,7 @@ import { photoUrls } from '#/schema/database/schema.drizzle';
 import type { z } from 'zod';
 
 import type { PhotoUrlSelectSchema } from '#/schema/database/schema.zod';
-import type { FileUploadSchema } from '#/schema/repository/schema.zod';
+import type { FileUploadSchema } from '#/schema/repository/repository.zod';
 
 export async function createPhotoUrl(
   files: z.infer<typeof FileUploadSchema>,

@@ -6,12 +6,18 @@ import { drizzle } from 'drizzle-orm/libsql';
 import { orThrow } from 'my-easy-fp';
 import pathe from 'pathe';
 
+import { loggerRepository } from '#/repository/logger/logger.respository';
 // eslint-disable-next-line import-x/no-namespace
 import * as schema from '#/schema/database/schema.drizzle';
 
 import type { LibSQLDatabase } from 'drizzle-orm/libsql';
+import type { AsyncReturnType } from 'type-fest';
 
-export async function initDb(): Promise<LibSQLDatabase<typeof schema>> {
+import type { initLog } from '#/modules/initialize/init.log';
+
+export async function initDb(
+  logger: AsyncReturnType<typeof initLog>,
+): Promise<LibSQLDatabase<typeof schema>> {
   const dbPath = orThrow(process.env.DB_FILE_NAME);
 
   // Convert relative path to absolute path based on project root
@@ -22,7 +28,14 @@ export async function initDb(): Promise<LibSQLDatabase<typeof schema>> {
   await fs.promises.mkdir(dbDirPath, { recursive: true });
 
   const client = createClient({ url: pathToFileURL(absDbPath).href });
-  const db = drizzle({ client, schema });
-  // await db.$client.sync();
+  const db = drizzle(client, { schema });
+
+  logger.info(
+    loggerRepository.processLog({
+      type: 'db-connect',
+      sqlite3: dbDirPath,
+    }),
+    'database connect success',
+  );
   return db;
 }

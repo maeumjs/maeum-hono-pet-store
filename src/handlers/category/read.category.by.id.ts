@@ -1,7 +1,7 @@
 import { createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
 
-import { categoryRepository } from '#/databases/repository/v1/category.repository';
+import { categoryRepository } from '#/repository/database/v1/category.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
 import { CategorySelectSchema } from '#/schema/database/schema.zod';
 

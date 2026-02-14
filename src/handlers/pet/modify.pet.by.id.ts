@@ -5,7 +5,7 @@ import {
   ModifyPetRepositorySchema,
   petRepository,
   ReadPetRepositorySchema,
-} from '#/databases/repository/v1/pet.repository';
+} from '#/repository/database/v1/pet.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';

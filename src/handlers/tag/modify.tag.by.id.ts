@@ -1,6 +1,6 @@
 import { createRoute } from '@hono/zod-openapi';
 
-import { tagRepository } from '#/databases/repository/v1/tag.repository';
+import { tagRepository } from '#/repository/database/v1/tag.repository';
 import { TagSelectSchema, TagUpdateSchema } from '#/schema/database/schema.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';

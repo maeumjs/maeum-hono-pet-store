@@ -1,5 +1,6 @@
 import { serveStatic } from '@hono/node-server/serve-static';
 import { swaggerUI } from '@hono/swagger-ui';
+import { requestId } from 'hono/request-id';
 
 import { createCategoryHandler, createCategoryRoute } from '#/handlers/category/create.category';
 import {
@@ -34,6 +35,10 @@ import { updateTagByIdHandler, updateTagByIdRoute } from '#/handlers/tag/update.
 import { container } from '#/loader';
 
 export function routing(): void {
+  container.app.use('/static/*', serveStatic({ root: './public' }));
+
+  container.app.use('*', requestId());
+
   container.app.openapi(readRootRoute, readRoot);
   container.app.openapi(readHealthRoute, readHealth);
 
@@ -69,6 +74,4 @@ export function routing(): void {
     '/swagger',
     swaggerUI({ url: '/swagger/json', deepLinking: true, filter: true }),
   );
-
-  container.app.use('/static/*', serveStatic({ root: './public' }));
 }

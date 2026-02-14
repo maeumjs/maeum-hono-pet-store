@@ -1,8 +1,8 @@
 import { createRoute } from '@hono/zod-openapi';
 
-import { photoUrlRepository } from '#/databases/repository/v1/photo.url.repository';
+import { photoUrlRepository } from '#/repository/database/v1/photo.url.repository';
 import { PhotoUrlSelectSchema } from '#/schema/database/schema.zod';
-import { FileUploadSchema } from '#/schema/repository/schema.zod';
+import { FileUploadSchema } from '#/schema/repository/repository.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 

@@ -4,7 +4,7 @@ import {
   CreatePetRepositorySchema,
   petRepository,
   ReadPetRepositorySchema,
-} from '#/databases/repository/v1/pet.repository';
+} from '#/repository/database/v1/pet.repository';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 

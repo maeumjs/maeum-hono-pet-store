@@ -1,6 +1,6 @@
 import { createRoute } from '@hono/zod-openapi';
 
-import { categoryRepository } from '#/databases/repository/v1/category.repository';
+import { categoryRepository } from '#/repository/database/v1/category.repository';
 import { CategoryInsertSchema, CategorySelectSchema } from '#/schema/database/schema.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
