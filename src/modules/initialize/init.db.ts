@@ -31,11 +31,11 @@ export async function initDb(
   const db = drizzle(client, { schema });
 
   logger.info(
-    loggerRepository.processLog({
+    loggerRepository.process({
       type: 'db-connect',
       sqlite3: dbDirPath,
     }),
-    'database connect success',
+    'database connect',
   );
   return db;
 }

@@ -1,7 +1,7 @@
 import { createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
 
-import { petRepository, ReadPetRepositorySchema } from '#/repository/database/v1/pet.repository';
+import { petRepository, ReadPetRepositorySchema } from '#/repository/database/pet.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';

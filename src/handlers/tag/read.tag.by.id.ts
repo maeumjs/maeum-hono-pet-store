@@ -1,7 +1,7 @@
 import { createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
 
-import { tagRepository } from '#/repository/database/v1/tag.repository';
+import { tagRepository } from '#/repository/database/tag.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
 import { TagSelectSchema } from '#/schema/database/schema.zod';
 

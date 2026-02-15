@@ -37,7 +37,7 @@ export function isValidLog(log: unknown): log is TLogInput {
  * @param log - Log object to process
  * @returns Processed log data
  */
-export function processLog(log: unknown): TLogInput {
+export function process(log: unknown): TLogInput {
   const validatedLog = validateLog(log);
 
   // Type-specific processing based on discriminator
@@ -55,4 +55,4 @@ export function processLog(log: unknown): TLogInput {
   }
 }
 
-export const loggerRepository = { processLog };
+export const loggerRepository = { process };

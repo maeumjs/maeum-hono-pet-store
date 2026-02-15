@@ -1,11 +1,14 @@
 import { serve } from '@hono/node-server';
 import { isError } from 'my-easy-fp';
 
+import { middleware } from '#/handlers/middleware';
 import { routing } from '#/handlers/route';
 import { container } from '#/loader';
 import { loggerRepository } from '#/repository/logger/logger.respository';
 
 async function app() {
+  middleware();
+
   routing();
 
   serve(
@@ -15,7 +18,7 @@ async function app() {
     },
     (info) => {
       container.logger.info(
-        loggerRepository.processLog({
+        loggerRepository.process({
           type: 'server-start',
           address: info.address,
           port: container.config.server.port,

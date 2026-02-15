@@ -17,13 +17,15 @@ async function createCategory(
   tag: z.infer<typeof CategoryInsertSchema>,
 ): Promise<z.infer<typeof CategorySelectSchema>> {
   // Drizzle ORM으로 tag insert
-  const result = await container.db
+  const qb = container.db
     .insert(categories)
     .values({
       name: tag.name,
     })
     // returning 은 sqlite3 DB만 사용 가능하다
     .returning();
+
+  const result = await qb;
 
   return atOrThrow(result, 0);
 }

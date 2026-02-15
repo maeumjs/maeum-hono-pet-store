@@ -22,7 +22,7 @@ export const route = createRoute({
         'application/json': {
           schema: z.object({
             server: ServerConfigurationSchema.omit({
-              logLevel: true,
+              log: true,
             }),
           }),
         },
