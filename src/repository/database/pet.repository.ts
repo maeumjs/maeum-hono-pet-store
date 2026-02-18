@@ -161,7 +161,7 @@ async function readPetById(
   id: bigint,
 ): Promise<z.infer<typeof ReadPetRepositorySchema> | undefined> {
   // Drizzle ORM으로 tag select
-  const result = await container.db.query.pets.findFirst({
+  const result = await container.db.writer.query.pets.findFirst({
     where: eq(pets.id, id),
     with: {
       category: true, // 1:1 관계
@@ -194,7 +194,7 @@ async function createPet(
   pet: z.infer<typeof CreatePetRepositorySchema>,
 ): Promise<z.infer<typeof ReadPetRepositorySchema>> {
   // Drizzle ORM으로 pet insert
-  const id = await container.db.transaction(
+  const id = await container.db.writer.transaction(
     async (tx) => {
       const insertedTags = await handleTags(tx, pet.tags);
       const insertedCategory = await categoryRepository.createCategoryWithDs(tx, pet.category);
@@ -235,13 +235,13 @@ async function updatePet(
   id: bigint,
   pet: z.infer<typeof UpdatePetRepositorySchema>,
 ): Promise<z.infer<typeof ReadPetRepositorySchema>> {
-  const selectedPet = await container.db.query.pets.findFirst({ where: eq(pets.id, id) });
+  const selectedPet = await container.db.writer.query.pets.findFirst({ where: eq(pets.id, id) });
 
   if (selectedPet == null) {
     throw new Error(`존재하지 않는 pet(${id}) 입니다`);
   }
 
-  await container.db.transaction(
+  await container.db.writer.transaction(
     async (tx) => {
       await handleTags(tx, pet.tags);
       const updatedCategory = await handleCategory(tx, pet.category);
@@ -268,13 +268,13 @@ async function modifyPet(
   id: bigint,
   pet: z.infer<typeof ModifyPetRepositorySchema>,
 ): Promise<z.infer<typeof ReadPetRepositorySchema>> {
-  const selectedPet = await container.db.query.pets.findFirst({ where: eq(pets.id, id) });
+  const selectedPet = await container.db.writer.query.pets.findFirst({ where: eq(pets.id, id) });
 
   if (selectedPet == null) {
     throw new Error(`존재하지 않는 pet(${id}) 입니다`);
   }
 
-  await container.db.transaction(
+  await container.db.writer.transaction(
     async (tx) => {
       if (pet.tags != null) {
         await handleTags(tx, pet.tags);
@@ -313,7 +313,7 @@ async function deletePet(id: bigint): Promise<z.infer<typeof ReadPetRepositorySc
     throw new Error(`존재하지 않는 pet(${id}) 입니다`);
   }
 
-  await container.db.transaction(async (tx) => {
+  await container.db.writer.transaction(async (tx) => {
     // 1. 삭제할 펫이 가진 태그 ID 목록을 먼저 확보 (Dangling Tag 체크용)
     const tagIds = selectedPet.tags.map((tag) => tag.id);
 

@@ -19,7 +19,7 @@ async function readNullableCategoryById(
   id: bigint,
 ): Promise<z.infer<typeof CategorySelectSchema>[] | undefined> {
   // Drizzle ORM으로 tag select
-  return container.db.select().from(categories).where(eq(categories.id, id));
+  return container.db.writer.select().from(categories).where(eq(categories.id, id));
 }
 
 async function readCategoryById(id: bigint): Promise<z.infer<typeof CategorySelectSchema>> {
@@ -49,7 +49,7 @@ async function createCategoryWithDs(
 async function createCategory(
   tag: z.infer<typeof CategoryInsertSchema>,
 ): Promise<z.infer<typeof CategorySelectSchema>> {
-  return createCategoryWithDs(container.db, tag);
+  return createCategoryWithDs(container.db.writer, tag);
 }
 
 async function updateCategoryById(
@@ -63,7 +63,7 @@ async function updateCategoryById(
   }
 
   // Drizzle ORM으로 tag update
-  await container.db
+  await container.db.writer
     .update(categories)
     .set({
       name: tag.name,
@@ -83,7 +83,7 @@ async function deleteCategoryById(
   }
 
   // Drizzle ORM으로 tag delete
-  await container.db.delete(categories).where(eq(categories.id, id));
+  await container.db.writer.delete(categories).where(eq(categories.id, id));
 
   return atOrThrow(result, 0);
 }
@@ -99,7 +99,7 @@ async function modifyCategoryById(
   }
 
   // Drizzle ORM으로 category update
-  await container.db.update(categories).set({ name: tag.name }).where(eq(categories.id, id));
+  await container.db.writer.update(categories).set({ name: tag.name }).where(eq(categories.id, id));
 
   return readCategoryById(id);
 }

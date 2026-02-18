@@ -8,8 +8,8 @@ import type { container } from '#/loader';
 //   ExtractTablesWithRelations<typeof schema> // 관계 정보 (핵심!)
 // >;
 
-export type TDBTransaction = Parameters<Parameters<typeof container.db.transaction>[0]>[0];
+export type TDBTransaction = Parameters<Parameters<typeof container.db.writer.transaction>[0]>[0];
 
-export type TDatabase = typeof container.db;
+export type TDatabase = typeof container.db.writer;
 
 export type TDataSource = TDBTransaction | TDatabase;

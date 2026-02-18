@@ -13,15 +13,28 @@ import type { initLog } from '#/modules/initialize/init.log';
 
 export async function initDb(
   logger: AsyncReturnType<typeof initLog>,
-): Promise<MySql2Database<typeof schema>> {
+): Promise<{ writer: MySql2Database<typeof schema>; reader: MySql2Database<typeof schema> }> {
   const host = orThrow(process.env.DB_PET_STORE_HOST, new Error('Cannot found host'));
   const port = parseInt(orThrow(process.env.DB_PET_STORE_PORT, new Error('Cannot found port')), 10);
   const database = orThrow(process.env.DB_PET_STORE_DB, new Error('Cannot found db'));
   const user = orThrow(process.env.DB_PET_STORE_USERNAME, new Error('Cannot found username'));
   const password = orThrow(process.env.DB_PET_STORE_PASSWORD, new Error('Cannot found passwordd'));
 
-  // 1. mysql2 커넥션 풀 생성
-  const poolConnection = mysql.createPool({
+  // 1. mysql2 writer 커넥션 풀 생성
+  const writerPoolConnection = mysql.createPool({
+    host,
+    port,
+    database,
+    user,
+    password,
+    // Master-Slave 구조나 Connection Pool 설정을 여기서 추가할 수 있습니다.
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  });
+
+  // 1. mysql2 reader(read-only) 커넥션 풀 생성
+  const readerPoolConnection = mysql.createPool({
     host,
     port,
     database,
@@ -34,7 +47,8 @@ export async function initDb(
   });
 
   // 2. Drizzle 인스턴스 생성 (mysql2용)
-  const db = drizzle(poolConnection, { schema, mode: 'default' });
+  const writer = drizzle(writerPoolConnection, { schema, mode: 'default' });
+  const reader = drizzle(readerPoolConnection, { schema, mode: 'default' });
 
   logger.info(
     loggerRepository.process({
@@ -44,6 +58,8 @@ export async function initDb(
     }),
     'database connect',
   );
+
+  const db = { writer, reader };
 
   return db;
 }

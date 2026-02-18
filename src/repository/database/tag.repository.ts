@@ -18,7 +18,7 @@ async function readNullableTagById(
   id: bigint,
 ): Promise<z.infer<typeof TagSelectSchema>[] | undefined> {
   // Drizzle ORM으로 tag select
-  return container.db.select().from(tags).where(eq(tags.id, id));
+  return container.db.writer.select().from(tags).where(eq(tags.id, id));
 }
 
 async function readTagById(id: bigint): Promise<z.infer<typeof TagSelectSchema>> {
@@ -30,7 +30,7 @@ async function readTagById(id: bigint): Promise<z.infer<typeof TagSelectSchema>>
 
 async function readTagsByIds(ids: bigint[]): Promise<z.infer<typeof TagSelectSchema>[]> {
   // Drizzle ORM으로 tag select
-  return container.db.select().from(tags).where(inArray(tags.id, ids));
+  return container.db.writer.select().from(tags).where(inArray(tags.id, ids));
 }
 
 async function createTag(
@@ -39,7 +39,10 @@ async function createTag(
   const uuid = uuidV7();
 
   // Drizzle ORM으로 tag insert
-  const [result] = await container.db.insert(tags).values({ uuid, name: tag.name }).$returningId();
+  const [result] = await container.db.writer
+    .insert(tags)
+    .values({ uuid, name: tag.name })
+    .$returningId();
 
   return readTagById(orThrow(result).id);
 }
@@ -55,7 +58,7 @@ async function updateTagById(
   }
 
   // Drizzle ORM으로 tag update
-  await container.db
+  await container.db.writer
     .update(tags)
     .set({
       name: tag.name,
@@ -73,7 +76,7 @@ async function deleteTagById(id: bigint): Promise<z.infer<typeof TagSelectSchema
   }
 
   // Drizzle ORM으로 tag delete
-  await container.db.delete(tags).where(eq(tags.id, id));
+  await container.db.writer.delete(tags).where(eq(tags.id, id));
 
   return atOrThrow(result, 0);
 }
@@ -89,7 +92,7 @@ async function modifyTagById(
   }
 
   // Drizzle ORM으로 tag update
-  await container.db.update(tags).set({ name: tag.name }).where(eq(tags.id, id));
+  await container.db.writer.update(tags).set({ name: tag.name }).where(eq(tags.id, id));
 
   return atOrThrow(result, 0);
 }
