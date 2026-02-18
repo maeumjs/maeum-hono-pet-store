@@ -35,6 +35,6 @@ export const readTagByIdRoute = createRoute({
 });
 
 export const readTagByIdHandler: RouteHandler<typeof readTagByIdRoute> = async (c) => {
-  const result = await tagRepository.readTagById(Number.parseInt(c.req.param().id, 10));
+  const result = await tagRepository.readTagById(BigInt(c.req.param().id));
   return c.json(result);
 };

@@ -47,10 +47,7 @@ export const updateCategoryByIdHandler: RouteHandler<typeof updateCategoryByIdRo
   c,
 ) => {
   const body = await c.req.json();
-  const result = await categoryRepository.updateCategoryById(
-    Number.parseInt(c.req.param().id, 10),
-    body,
-  );
+  const result = await categoryRepository.updateCategoryById(BigInt(c.req.param().id), body);
 
   return c.json(result);
 };

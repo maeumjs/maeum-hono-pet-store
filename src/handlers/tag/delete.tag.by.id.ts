@@ -33,6 +33,6 @@ export const deleteTagByIdRoute = createRoute({
 });
 
 export const deleteTagByIdHandler: RouteHandler<typeof deleteTagByIdRoute> = async (c) => {
-  const result = await tagRepository.deleteTagById(Number.parseInt(c.req.param().id, 10));
+  const result = await tagRepository.deleteTagById(BigInt(c.req.param().id));
   return c.json(result);
 };

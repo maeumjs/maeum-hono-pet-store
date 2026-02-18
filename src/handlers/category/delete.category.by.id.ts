@@ -39,6 +39,6 @@ export const deleteCategoryByIdRoute = createRoute({
 export const deleteCategoryByIdHandler: RouteHandler<typeof deleteCategoryByIdRoute> = async (
   c,
 ) => {
-  const result = await categoryRepository.deleteCategoryById(Number.parseInt(c.req.param().id, 10));
+  const result = await categoryRepository.deleteCategoryById(BigInt(c.req.param().id));
   return c.json(result);
 };

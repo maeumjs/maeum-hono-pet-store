@@ -34,6 +34,6 @@ export const readPetRoute = createRoute({
 });
 
 export const readPetHandler: RouteHandler<typeof readPetRoute> = async (c) => {
-  const result = await petRepository.readPetById(Number.parseInt(c.req.param().id, 10));
+  const result = await petRepository.readPetById(BigInt(c.req.param().id));
   return c.json(result);
 };

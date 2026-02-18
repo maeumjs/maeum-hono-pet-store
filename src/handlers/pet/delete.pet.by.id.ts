@@ -34,6 +34,6 @@ export const deletePetRoute = createRoute({
 });
 
 export const deletePetHandler: RouteHandler<typeof deletePetRoute> = async (c) => {
-  const result = await petRepository.deletePet(Number.parseInt(c.req.param().id, 10));
+  const result = await petRepository.deletePet(BigInt(c.req.param().id));
   return c.json(result);
 };

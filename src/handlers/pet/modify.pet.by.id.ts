@@ -46,6 +46,6 @@ export const modifyPetRoute = createRoute({
 
 export const modifyPetHandler: RouteHandler<typeof modifyPetRoute> = async (c) => {
   const body = await c.req.json();
-  const result = await petRepository.modifyPet(Number.parseInt(c.req.param().id, 10), body);
+  const result = await petRepository.modifyPet(BigInt(c.req.param().id), body);
   return c.json(result);
 };

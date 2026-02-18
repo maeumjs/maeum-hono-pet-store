@@ -1,9 +1,12 @@
 import { and, eq, inArray, ne } from 'drizzle-orm';
-import { atOrThrow, orThrow } from 'my-easy-fp';
+import { orThrow } from 'my-easy-fp';
 import { omit } from 'radash';
+import { v7 as uuidV7 } from 'uuid';
 import { z } from 'zod';
 
 import { container } from '#/loader';
+import { categoryRepository } from '#/repository/database/category.repository';
+import { tagRepository } from '#/repository/database/tag.repository';
 import { categories, pets, petsToTags, photoUrls, tags } from '#/schema/database/schema.drizzle';
 import {
   CategorySelectSchema,
@@ -67,13 +70,20 @@ async function handleTags(
   }
 
   const willInsertTags = values.flatMap((tag) => ('name' in tag ? [tag.name] : []));
-  const insertedTags =
+  const insertedTagIds =
     willInsertTags.length > 0
       ? await db
           .insert(tags)
-          .values(willInsertTags.map((tag) => ({ name: tag })))
-          .returning()
+          .values(
+            willInsertTags.map((tag) => ({
+              uuid: uuidV7(),
+              name: tag,
+            })),
+          )
+          .$returningId()
       : [];
+
+  const insertedTags = await tagRepository.readTagsByIds(insertedTagIds.map((id) => id.id));
 
   return {
     selected: selectedTags,
@@ -94,18 +104,22 @@ async function handleCategory(
     return orThrow(selectedCategory, new Error(`Cannot found category: ${category.id}`));
   }
 
-  const insertedCategories = await db
+  const uuid = uuidV7();
+  const [insertedCategoryId] = await db
     .insert(categories)
-    .values({ name: category.name })
-    .returning();
+    .values({ uuid, name: category.name })
+    .$returningId();
+  const insertedCategory = await categoryRepository.readCategoryById(
+    orThrow(insertedCategoryId?.id),
+  );
 
-  return atOrThrow(insertedCategories, 0);
+  return insertedCategory;
 }
 
 // Reconciliation(동기화)
 async function handlePhotoUrls(
   db: TDataSource,
-  petId: number,
+  petId: bigint,
   newUrls: string[], // z.array(PhotoUrlSelectSchema.shape.url)
 ) {
   // 1. 현재 DB에 저장된 해당 Pet의 사진 목록 조회
@@ -133,7 +147,7 @@ async function handlePhotoUrls(
 
   // 추가 작업
   if (urlsToInsert.length > 0) {
-    await db.insert(photoUrls).values(urlsToInsert.map((url) => ({ url, petId })));
+    await db.insert(photoUrls).values(urlsToInsert.map((url) => ({ url, uuid: uuidV7(), petId })));
   }
 
   // 5. 최종 결과 반환 (유지된 것 + 새로 들어온 것)
@@ -143,62 +157,8 @@ async function handlePhotoUrls(
   });
 }
 
-async function createPet(
-  pet: z.infer<typeof CreatePetRepositorySchema>,
-): Promise<z.infer<typeof ReadPetRepositorySchema>> {
-  // Drizzle ORM으로 pet insert
-  const inserted = await container.db.transaction(
-    async (tx) => {
-      const insertedTags = await handleTags(tx, pet.tags);
-
-      const insertedCategories = await tx
-        .insert(categories)
-        .values({ name: pet.category.name })
-        .returning();
-
-      const insertedCategory = atOrThrow(insertedCategories, 0);
-
-      const insertedPets = await tx
-        .insert(pets)
-        .values({
-          name: pet.name,
-          status: pet.status,
-          categoryId: insertedCategory.id,
-        })
-        .returning();
-
-      const insertedPet = atOrThrow(insertedPets, 0);
-
-      const insertedPhotoUrls = await tx
-        .insert(photoUrls)
-        .values(pet.photoUrls.map((url) => ({ url, petId: insertedPet.id })))
-        .returning();
-
-      await tx
-        .insert(petsToTags)
-        .values(
-          insertedTags.all.map((tag) => ({
-            petId: insertedPet.id,
-            tagId: tag.id,
-          })),
-        )
-        .returning();
-
-      return {
-        ...omit(insertedPet, ['categoryId']),
-        category: insertedCategory,
-        tags: insertedTags.all,
-        photoUrls: insertedPhotoUrls,
-      } satisfies z.infer<typeof ReadPetRepositorySchema>;
-    },
-    { behavior: 'exclusive' },
-  );
-
-  return inserted;
-}
-
 async function readPetById(
-  id: number,
+  id: bigint,
 ): Promise<z.infer<typeof ReadPetRepositorySchema> | undefined> {
   // Drizzle ORM으로 tag select
   const result = await container.db.query.pets.findFirst({
@@ -230,8 +190,49 @@ async function readPetById(
   return selectedPet;
 }
 
+async function createPet(
+  pet: z.infer<typeof CreatePetRepositorySchema>,
+): Promise<z.infer<typeof ReadPetRepositorySchema>> {
+  // Drizzle ORM으로 pet insert
+  const id = await container.db.transaction(
+    async (tx) => {
+      const insertedTags = await handleTags(tx, pet.tags);
+      const insertedCategory = await categoryRepository.createCategoryWithDs(tx, pet.category);
+      const uuid = uuidV7();
+
+      const [nullableInsertedPetId] = await tx
+        .insert(pets)
+        .values({
+          uuid,
+          name: pet.name,
+          status: pet.status,
+          categoryId: insertedCategory.id,
+        })
+        .$returningId();
+      const insertedPetId = orThrow(nullableInsertedPetId);
+
+      await tx
+        .insert(photoUrls)
+        .values(pet.photoUrls.map((url) => ({ url, uuid: uuidV7(), petId: insertedPetId.id })));
+
+      await tx.insert(petsToTags).values(
+        insertedTags.all.map((tag) => ({
+          petId: insertedPetId.id,
+          tagId: tag.id,
+        })),
+      );
+
+      return insertedPetId.id;
+    },
+    { isolationLevel: 'read committed' },
+  );
+
+  const insertedPet = await readPetById(id);
+  return orThrow(insertedPet);
+}
+
 async function updatePet(
-  id: number,
+  id: bigint,
   pet: z.infer<typeof UpdatePetRepositorySchema>,
 ): Promise<z.infer<typeof ReadPetRepositorySchema>> {
   const selectedPet = await container.db.query.pets.findFirst({ where: eq(pets.id, id) });
@@ -253,12 +254,9 @@ async function updatePet(
           status: pet.status,
           categoryId: updatedCategory.id,
         })
-        .where(eq(pets.id, id))
-        .returning();
+        .where(eq(pets.id, id));
     },
-    {
-      behavior: 'exclusive',
-    },
+    { isolationLevel: 'read committed' },
   );
 
   const updatedPet = await readPetById(id);
@@ -267,7 +265,7 @@ async function updatePet(
 }
 
 async function modifyPet(
-  id: number,
+  id: bigint,
   pet: z.infer<typeof ModifyPetRepositorySchema>,
 ): Promise<z.infer<typeof ReadPetRepositorySchema>> {
   const selectedPet = await container.db.query.pets.findFirst({ where: eq(pets.id, id) });
@@ -299,7 +297,7 @@ async function modifyPet(
         .where(eq(pets.id, id));
     },
     {
-      behavior: 'immediate',
+      isolationLevel: 'read committed',
     },
   );
 
@@ -308,7 +306,7 @@ async function modifyPet(
   return orThrow(updatedPet);
 }
 
-async function deletePet(id: number): Promise<z.infer<typeof ReadPetRepositorySchema>> {
+async function deletePet(id: bigint): Promise<z.infer<typeof ReadPetRepositorySchema>> {
   const selectedPet = await readPetById(id);
 
   if (selectedPet == null) {

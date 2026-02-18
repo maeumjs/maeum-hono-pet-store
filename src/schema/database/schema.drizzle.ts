@@ -1,51 +1,67 @@
 import { relations } from 'drizzle-orm';
-import { index, integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import {
+  bigint,
+  binary,
+  index,
+  int,
+  mysqlTable,
+  primaryKey,
+  varchar,
+} from 'drizzle-orm/mysql-core';
 
 // ------------------------------------------------------------------------------------
 // Schema
 // ------------------------------------------------------------------------------------
-export const tags = sqliteTable('tags', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  name: text('name', { length: 100 }).notNull(),
+
+export const tags = mysqlTable('tags', {
+  id: bigint('id', { mode: 'bigint', unsigned: true }).autoincrement().primaryKey(),
+  uuid: binary('uuid', { length: 16 }).notNull().unique(),
+  // uuid: char('uuid', { length: 36 }).notNull().unique(),
+  name: varchar('name', { length: 100 }).notNull(),
 });
 
-export const categories = sqliteTable('categories', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  name: text('name', { length: 100 }).notNull(),
+export const categories = mysqlTable('categories', {
+  id: bigint('id', { mode: 'bigint', unsigned: true }).autoincrement().primaryKey(),
+  uuid: binary('uuid', { length: 16 }).notNull().unique(),
+  name: varchar('name', { length: 100 }).notNull(),
 });
 
-export const photoUrls = sqliteTable('photo_urls', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  url: text('url', { length: 500 }).notNull(),
-  petId: integer('pet_id').notNull(),
+export const photoUrls = mysqlTable('photo_urls', {
+  id: bigint('id', { mode: 'bigint', unsigned: true }).autoincrement().primaryKey(),
+  uuid: binary('uuid', { length: 16 }).notNull().unique(),
+  url: varchar('url', { length: 500 }).notNull(),
+  petId: bigint('pet_id', { mode: 'bigint', unsigned: true }).notNull(),
 });
 
-export const pets = sqliteTable('pets', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  name: text('name', { length: 100 }).notNull(),
-  status: integer('status').notNull(),
-  categoryId: integer('category_id').notNull(),
+export const pets = mysqlTable('pets', {
+  id: bigint('id', { mode: 'bigint', unsigned: true }).autoincrement().primaryKey(),
+  uuid: binary('uuid', { length: 16 }).notNull().unique(),
+  name: varchar('name', { length: 100 }).notNull(),
+  status: int('status').notNull(),
+  categoryId: bigint('category_id', { mode: 'bigint', unsigned: true }).notNull(),
 });
 
 // ------------------------------------------------------------------------------------
-// Relation
+// N:N Bridge Table
 // ------------------------------------------------------------------------------------
-// 3. 중간 테이블 (Many-to-Many Bridge)
-export const petsToTags = sqliteTable(
+export const petsToTags = mysqlTable(
   'pets_to_tags',
   {
-    petId: integer('pet_id').notNull(), // .references() 제거
-    tagId: integer('tag_id').notNull(), // .references() 제거
+    petId: bigint('pet_id', { mode: 'bigint', unsigned: true }).notNull(),
+    tagId: bigint('tag_id', { mode: 'bigint', unsigned: true }).notNull(),
   },
-  (table) => [
-    primaryKey({ columns: [table.petId, table.tagId] }),
-    // 운영을 위해 인덱스는 걸어두는 것이 좋습니다. (Gap Lock 방지)
-    index('pet_id_idx').on(table.petId),
-    index('tag_id_idx').on(table.tagId),
-  ],
+  (table) => ({
+    pk: primaryKey({ columns: [table.petId, table.tagId] }),
+    // mysql-core에서 가져온 index 함수를 사용합니다.
+    petIdIdx: index('idx__pet_id').on(table.petId),
+    tagIdIdx: index('idx__tag_id').on(table.tagId),
+  }),
 );
 
-// ✅ 이 Relations 설정이 타입 추론의 핵심입니다!
+// ------------------------------------------------------------------------------------
+// Relations (App Level)
+// ------------------------------------------------------------------------------------
+
 export const petsToTagsRelations = relations(petsToTags, ({ one }) => ({
   pet: one(pets, {
     fields: [petsToTags.petId],
@@ -57,25 +73,18 @@ export const petsToTagsRelations = relations(petsToTags, ({ one }) => ({
   }),
 }));
 
-// 하지만 Drizzle 관계는 설정해줍니다 (App 레벨의 관계)
 export const petsRelations = relations(pets, ({ one, many }) => ({
-  // 1:1 관계 (Pet has one Category)
   category: one(categories, {
     fields: [pets.categoryId],
     references: [categories.id],
   }),
-  // 1:N 관계 (Pet has many PhotoUrl)
   photoUrls: many(photoUrls),
-  // N:N
   petsToTags: many(petsToTags),
 }));
 
-// 반대 방향 (선택 사항이지만 조회를 위해 추천)
-export const categoriesRelations = relations(categories, ({ one }) => ({
-  pet: one(pets, {
-    fields: [categories.id],
-    references: [pets.categoryId],
-  }),
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  // 1:N 관계이므로 many로 설정하는 것이 논리적으로 더 정확합니다.
+  pets: many(pets),
 }));
 
 export const photoUrlsRelations = relations(photoUrls, ({ one }) => ({

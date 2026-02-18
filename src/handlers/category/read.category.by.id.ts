@@ -35,6 +35,6 @@ export const readCategoryByIdRoute = createRoute({
 });
 
 export const readCategoryByIdHandler: RouteHandler<typeof readCategoryByIdRoute> = async (c) => {
-  const result = await categoryRepository.readCategoryById(Number.parseInt(c.req.param().id, 10));
+  const result = await categoryRepository.readCategoryById(BigInt(c.req.param().id));
   return c.json(result);
 };

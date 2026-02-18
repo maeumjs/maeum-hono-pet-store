@@ -47,7 +47,7 @@ export const modifyTagByIdHandler: RouteHandler<typeof modifyTagByIdRoute> = asy
   const body = await c.req.json();
   const params = c.req.param();
 
-  const result = await tagRepository.modifyTagById(Number.parseInt(params.id, 10), body);
+  const result = await tagRepository.modifyTagById(BigInt(params.id), body);
 
   return c.json(result);
 };

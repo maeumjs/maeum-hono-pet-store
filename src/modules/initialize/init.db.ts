@@ -1,41 +1,49 @@
-import fs from 'node:fs';
-import { pathToFileURL } from 'node:url';
-
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
+import { drizzle } from 'drizzle-orm/mysql2'; // mysql2용 drizzle
 import { orThrow } from 'my-easy-fp';
-import pathe from 'pathe';
+import mysql from 'mysql2/promise'; // mysql2 드라이버
 
 import { loggerRepository } from '#/repository/logger/logger.respository';
 // eslint-disable-next-line import-x/no-namespace
 import * as schema from '#/schema/database/schema.drizzle';
 
-import type { LibSQLDatabase } from 'drizzle-orm/libsql';
+import type { MySql2Database } from 'drizzle-orm/mysql2'; // 타입 변경
 import type { AsyncReturnType } from 'type-fest';
 
 import type { initLog } from '#/modules/initialize/init.log';
 
 export async function initDb(
   logger: AsyncReturnType<typeof initLog>,
-): Promise<LibSQLDatabase<typeof schema>> {
-  const dbPath = orThrow(process.env.DB_FILE_NAME);
+): Promise<MySql2Database<typeof schema>> {
+  const host = orThrow(process.env.DB_PET_STORE_HOST, new Error('Cannot found host'));
+  const port = parseInt(orThrow(process.env.DB_PET_STORE_PORT, new Error('Cannot found port')), 10);
+  const database = orThrow(process.env.DB_PET_STORE_DB, new Error('Cannot found db'));
+  const user = orThrow(process.env.DB_PET_STORE_USERNAME, new Error('Cannot found username'));
+  const password = orThrow(process.env.DB_PET_STORE_PASSWORD, new Error('Cannot found passwordd'));
 
-  // Convert relative path to absolute path based on project root
-  const absDbPath = pathe.resolve(dbPath);
+  // 1. mysql2 커넥션 풀 생성
+  const poolConnection = mysql.createPool({
+    host,
+    port,
+    database,
+    user,
+    password,
+    // Master-Slave 구조나 Connection Pool 설정을 여기서 추가할 수 있습니다.
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  });
 
-  // Ensure the directory exists
-  const dbDirPath = pathe.dirname(absDbPath);
-  await fs.promises.mkdir(dbDirPath, { recursive: true });
-
-  const client = createClient({ url: pathToFileURL(absDbPath).href });
-  const db = drizzle(client, { schema });
+  // 2. Drizzle 인스턴스 생성 (mysql2용)
+  const db = drizzle(poolConnection, { schema, mode: 'default' });
 
   logger.info(
     loggerRepository.process({
       type: 'db-connect',
-      sqlite3: dbDirPath,
+      // 로그 데이터는 환경에 맞게 수정 (예: host 정보 추출 등)
+      sqlite3: 'mysql-database',
     }),
     'database connect',
   );
+
   return db;
 }

@@ -7,7 +7,7 @@ import { categories, pets, photoUrls, tags } from '#/schema/database/schema.driz
 // ------------------------------------------------------------------------------------------
 export const CategoryInsertSchema = createInsertSchema(categories, {
   name: (schema) => schema.min(1).max(100),
-});
+}).omit({ uuid: true });
 
 export const CategorySelectSchema = createSelectSchema(categories);
 
@@ -22,7 +22,7 @@ export const CategoryModifySchema = CategoryUpdateSchema.partial();
 // ------------------------------------------------------------------------------------------
 export const TagInsertSchema = createInsertSchema(tags, {
   name: (schema) => schema.min(1).max(100),
-});
+}).omit({ uuid: true });
 
 export const TagSelectSchema = createSelectSchema(tags);
 
@@ -45,7 +45,7 @@ export const PhotoUrlSelectSchema = createSelectSchema(photoUrls);
 // ------------------------------------------------------------------------------------------
 export const PetInsertSchema = createInsertSchema(pets, {
   name: (schema) => schema.min(1).max(100),
-});
+}).omit({ uuid: true });
 
 export const PetSelectSchema = createSelectSchema(pets);
 

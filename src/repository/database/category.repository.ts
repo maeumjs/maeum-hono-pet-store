@@ -1,11 +1,13 @@
 import { eq } from 'drizzle-orm';
-import { atOrThrow } from 'my-easy-fp';
+import { atOrThrow, orThrow } from 'my-easy-fp';
+import { v7 as uuidV7 } from 'uuid';
 
 import { container } from '#/loader';
 import { categories } from '#/schema/database/schema.drizzle';
 
 import type z from 'zod';
 
+import type { TDataSource } from '#/schema/database/schema.type';
 import type {
   CategoryInsertSchema,
   CategoryModifySchema,
@@ -13,86 +15,100 @@ import type {
   CategoryUpdateSchema,
 } from '#/schema/database/schema.zod';
 
-async function createCategory(
+async function readNullableCategoryById(
+  id: bigint,
+): Promise<z.infer<typeof CategorySelectSchema>[] | undefined> {
+  // Drizzle ORM으로 tag select
+  return container.db.select().from(categories).where(eq(categories.id, id));
+}
+
+async function readCategoryById(id: bigint): Promise<z.infer<typeof CategorySelectSchema>> {
+  // Drizzle ORM으로 tag select
+  const result = await readNullableCategoryById(id);
+  return atOrThrow(result, 0);
+}
+
+async function createCategoryWithDs(
+  db: TDataSource,
   tag: z.infer<typeof CategoryInsertSchema>,
 ): Promise<z.infer<typeof CategorySelectSchema>> {
+  const uuid = uuidV7();
+
   // Drizzle ORM으로 tag insert
-  const qb = container.db
+  const [result] = await db
     .insert(categories)
     .values({
       name: tag.name,
+      uuid,
     })
-    // returning 은 sqlite3 DB만 사용 가능하다
-    .returning();
+    .$returningId();
 
-  const result = await qb;
-
-  return atOrThrow(result, 0);
+  return readCategoryById(orThrow(result).id);
 }
 
-async function readCategoryById(id: number): Promise<z.infer<typeof CategorySelectSchema>> {
-  // Drizzle ORM으로 tag select
-  const result = await container.db.select().from(categories).where(eq(categories.id, id));
-
-  return atOrThrow(result, 0);
+async function createCategory(
+  tag: z.infer<typeof CategoryInsertSchema>,
+): Promise<z.infer<typeof CategorySelectSchema>> {
+  return createCategoryWithDs(container.db, tag);
 }
 
 async function updateCategoryById(
-  id: number,
+  id: bigint,
   tag: z.infer<typeof CategoryUpdateSchema>,
-): Promise<z.infer<typeof CategorySelectSchema>> {
-  // Drizzle ORM으로 tag update
-  const result = await container.db
-    .update(categories)
-    .set({
-      name: tag.name,
-    })
-    .where(eq(categories.id, id))
-    // returning 은 sqlite3 DB만 사용 가능하다
-    .returning();
-
-  return atOrThrow(result, 0);
-}
-
-async function deleteCategoryById(
-  id: number,
 ): Promise<z.infer<typeof CategorySelectSchema> | undefined> {
-  // Drizzle ORM으로 tag select
-  const result = await container.db.select().from(categories).where(eq(categories.id, id));
+  const result = await readNullableCategoryById(id);
 
   if (result == null) {
     return undefined;
   }
 
+  // Drizzle ORM으로 tag update
   await container.db
-    .delete(categories)
-    .where(eq(categories.id, id))
-    // returning 은 sqlite3 DB만 사용 가능하다
-    .returning();
+    .update(categories)
+    .set({
+      name: tag.name,
+    })
+    .where(eq(categories.id, id));
+
+  return readCategoryById(id);
+}
+
+async function deleteCategoryById(
+  id: bigint,
+): Promise<z.infer<typeof CategorySelectSchema> | undefined> {
+  const result = await readNullableCategoryById(id);
+
+  if (result == null) {
+    return undefined;
+  }
+
+  // Drizzle ORM으로 tag delete
+  await container.db.delete(categories).where(eq(categories.id, id));
 
   return atOrThrow(result, 0);
 }
 
 async function modifyCategoryById(
-  id: number,
+  id: bigint,
   tag: z.infer<typeof CategoryModifySchema>,
-): Promise<z.infer<typeof CategorySelectSchema>> {
-  // Drizzle ORM으로 tag insert
-  const result = await container.db
-    .update(categories)
-    .set({
-      name: tag.name,
-    })
-    .where(eq(categories.id, id))
-    // returning 은 sqlite3 DB만 사용 가능하다
-    .returning();
+): Promise<z.infer<typeof CategorySelectSchema> | undefined> {
+  const result = await readNullableCategoryById(id);
 
-  return atOrThrow(result, 0);
+  if (result == null) {
+    return undefined;
+  }
+
+  // Drizzle ORM으로 category update
+  await container.db.update(categories).set({ name: tag.name }).where(eq(categories.id, id));
+
+  return readCategoryById(id);
 }
 
 export const categoryRepository = {
   createCategory,
+  createCategoryWithDs,
   readCategoryById,
+  readNullableCategoryById,
   updateCategoryById,
   deleteCategoryById,
   modifyCategoryById,
