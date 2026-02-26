@@ -10,21 +10,21 @@ const BASE_URL = 'http://localhost:7878';
 const pets = [
   {
     name: 'Nabi',
-    status: 'available',
+    status: 1,
     category: { name: 'Cat' },
     tags: [{ name: 'cute' }, { name: 'indoor' }],
     photoUrls: ['http://localhost:7878/static/cat.jpg'],
   },
   {
     name: 'Mong',
-    status: 'available',
+    status: 1,
     category: { name: 'Dog' },
     tags: [{ name: 'friendly' }, { name: 'outdoor' }],
     photoUrls: ['http://localhost:7878/static/dog.jpg'],
   },
   {
     name: 'Toki',
-    status: 'available',
+    status: 1,
     category: { name: 'Rabbit' },
     tags: [{ name: 'cute' }, { name: 'indoor' }],
     photoUrls: ['http://localhost:7878/static/rabbit.jpg'],

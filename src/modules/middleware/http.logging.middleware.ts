@@ -23,7 +23,13 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
       'Request received',
     );
 
-    await next();
+    let caughtError: unknown;
+
+    try {
+      await next();
+    } catch (err) {
+      caughtError = err;
+    }
 
     // Parse request body AFTER next()
     const isDevelopment = container.config.server.runMode !== 'production';
@@ -75,8 +81,10 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
       responseBody = '[unable to read body]';
     }
 
+    const status = caughtError != null ? 500 : clonedResponse.status;
+
     const logData: Record<string, unknown> = {
-      status: clonedResponse.status,
+      status,
       content_type: responseContentType,
       req_id: c.get('requestId'),
       method: c.req.method,
@@ -89,6 +97,15 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
     // Log response body only in development mode
     if (isDevelopment) {
       logData.res = responseBody;
+    }
+
+    if (caughtError != null) {
+      const err = caughtError instanceof Error ? caughtError : new Error(String(caughtError));
+      container.logger.error(
+        { ...logData, err: { message: err.message, stack: err.stack } },
+        'Request error',
+      );
+      throw err;
     }
 
     container.logger.info(logData, 'Response sent');
