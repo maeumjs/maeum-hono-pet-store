@@ -17,6 +17,7 @@ export const customEslintRule = [
           code: 120,
         },
       ],
+      'no-await-in-loop': 'off',
       'no-underscore-dangle': ['error', { allowAfterThis: true }],
       'no-restricted-syntax': [
         'error',

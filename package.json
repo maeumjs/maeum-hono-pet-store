@@ -33,7 +33,8 @@
     "dd": "deps-diff md -d prod -d dev --title-list-type 'm' --deps-list-type 'm' --content-list-type 'm'",
     "_uid": "node -e \"console.log(require('crypto').randomUUID().replace(/-/g, ''))\"",
     "uid": "node -e \"console.log(require('crypto').randomUUID())\"",
-    "__prepare": "husky install"
+    "__prepare": "husky install",
+    "seed": "tsx scripts/seed.ts"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.1",
     "@eslint/js": "^9.39.2",
+    "@testcontainers/mysql": "^11.12.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/archiver": "^6.0.2",
     "@types/figlet": "^1.5.8",
