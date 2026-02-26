@@ -1,13 +1,12 @@
 import { and, eq, inArray, ne } from 'drizzle-orm';
 import { orThrow } from 'my-easy-fp';
 import { omit } from 'radash';
-import { v7 as uuidV7 } from 'uuid';
 import { z } from 'zod';
 
 import { container } from '#/loader';
 import { NotFoundError } from '#/modules/error/not.found.error';
+import { uuidV7Binary } from '#/modules/uuid/uuid.buffer';
 import { categoryRepository } from '#/repository/database/category.repository';
-import { tagRepository } from '#/repository/database/tag.repository';
 import { categories, pets, petsToTags, photoUrls, tags } from '#/schema/database/schema.drizzle';
 import {
   CategorySelectSchema,
@@ -67,7 +66,7 @@ async function handleTags(
 
   if (missingIds.length > 0) {
     // 존재하지 않는 태그 ID가 포함된 경우 처리
-    throw new Error(`존재하지 않는 태그 ID가 포함되어 있습니다: ${missingIds.join(', ')}`);
+    throw new NotFoundError(`Cannot found Tag: ${missingIds.join(', ')}`);
   }
 
   const willInsertTags = values.flatMap((tag) => ('name' in tag ? [tag.name] : []));
@@ -77,17 +76,16 @@ async function handleTags(
           .insert(tags)
           .values(
             willInsertTags.map((tag) => ({
-              uuid: uuidV7(),
+              uuid: uuidV7Binary(),
               name: tag,
             })),
           )
           .$returningId()
       : [];
 
-  const insertedTags = await tagRepository.readTagsByIds(
-    insertedTagIds.map((id) => id.id),
-    'writer',
-  );
+  const ids = insertedTagIds.map((row) => row.id);
+  const insertedTags =
+    ids.length > 0 ? await db.select().from(tags).where(inArray(tags.id, ids)) : [];
 
   return {
     selected: selectedTags,
@@ -108,7 +106,7 @@ async function handleCategory(
     return orThrow(selectedCategory, new Error(`Cannot found category: ${category.id}`));
   }
 
-  const uuid = uuidV7();
+  const uuid = uuidV7Binary();
   const [insertedCategoryId] = await db
     .insert(categories)
     .values({ uuid, name: category.name })
@@ -152,7 +150,9 @@ async function handlePhotoUrls(
 
   // 추가 작업
   if (urlsToInsert.length > 0) {
-    await db.insert(photoUrls).values(urlsToInsert.map((url) => ({ url, uuid: uuidV7(), petId })));
+    await db
+      .insert(photoUrls)
+      .values(urlsToInsert.map((url) => ({ url, uuid: uuidV7Binary(), petId })));
   }
 
   // 5. 최종 결과 반환 (유지된 것 + 새로 들어온 것)
@@ -206,7 +206,7 @@ async function createPet(
     async (tx) => {
       const insertedTags = await handleTags(tx, pet.tags);
       const insertedCategory = await categoryRepository.createCategoryWithDs(tx, pet.category);
-      const uuid = uuidV7();
+      const uuid = uuidV7Binary();
 
       const [nullableInsertedPetId] = await tx
         .insert(pets)
@@ -221,7 +221,9 @@ async function createPet(
 
       await tx
         .insert(photoUrls)
-        .values(pet.photoUrls.map((url) => ({ url, uuid: uuidV7(), petId: insertedPetId.id })));
+        .values(
+          pet.photoUrls.map((url) => ({ url, uuid: uuidV7Binary(), petId: insertedPetId.id })),
+        );
 
       await tx.insert(petsToTags).values(
         insertedTags.all.map((tag) => ({

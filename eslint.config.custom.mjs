@@ -83,7 +83,12 @@ export const customOverrideEslintRule = [
     },
   },
   {
-    files: ['vitest.config.mts', 'eslint.config.mjs', 'eslint.config.custom.mjs'],
+    files: [
+      'vitest.config.mts',
+      'eslint.config.mjs',
+      'eslint.config.custom.mjs',
+      'drizzle.config.ts',
+    ],
     rules: {
       'import-x/no-extraneous-dependencies': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
@@ -91,10 +96,11 @@ export const customOverrideEslintRule = [
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
+      'no-console': 'off',
     },
   },
   {
-    files: ['vitest.config.mts'],
+    files: ['vitest.config.mts', 'drizzle.config.ts'],
     rules: {
       'import-x/no-default-export': 'off',
     },

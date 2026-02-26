@@ -1,9 +1,9 @@
 import { eq, inArray } from 'drizzle-orm';
 import { atOrThrow, orThrow } from 'my-easy-fp';
-import { v7 as uuidV7 } from 'uuid';
 
 import { container } from '#/loader';
 import { NotFoundError } from '#/modules/error/not.found.error';
+import { uuidV7Binary } from '#/modules/uuid/uuid.buffer';
 import { tags } from '#/schema/database/schema.drizzle';
 
 import type z from 'zod';
@@ -51,12 +51,10 @@ async function readTagsByIds(
 async function createTag(
   tag: z.infer<typeof TagInsertSchema>,
 ): Promise<z.infer<typeof TagSelectSchema>> {
-  const uuid = uuidV7();
-
   // Drizzle ORM으로 tag insert
   const [result] = await container.db.writer
     .insert(tags)
-    .values({ uuid, name: tag.name })
+    .values({ uuid: uuidV7Binary(), name: tag.name })
     .$returningId();
 
   return readTagById(orThrow(result).id, 'writer');

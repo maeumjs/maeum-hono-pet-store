@@ -31,3 +31,6 @@ export const SignedLongStringSchema = z
 export const UnsignedLongStringSchema = z
   .string()
   .pipe(UnsignedLongBigIntSchema.transform((n) => n.toString()));
+
+// Converts bigint (from DB) to string for JSON serialization
+export const BigIntToStringSchema = z.bigint().transform((v) => v.toString());

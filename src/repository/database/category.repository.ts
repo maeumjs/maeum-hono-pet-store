@@ -1,9 +1,9 @@
 import { eq } from 'drizzle-orm';
 import { atOrThrow, orThrow } from 'my-easy-fp';
-import { v7 as uuidV7 } from 'uuid';
 
 import { container } from '#/loader';
 import { NotFoundError } from '#/modules/error/not.found.error';
+import { uuidV7Binary } from '#/modules/uuid/uuid.buffer';
 import { categories } from '#/schema/database/schema.drizzle';
 
 import type z from 'zod';
@@ -41,18 +41,18 @@ async function createCategoryWithDs(
   db: TDataSource,
   tag: z.infer<typeof CategoryInsertSchema>,
 ): Promise<z.infer<typeof CategorySelectSchema>> {
-  const uuid = uuidV7();
-
   // Drizzle ORM으로 tag insert
   const [result] = await db
     .insert(categories)
     .values({
       name: tag.name,
-      uuid,
+      uuid: uuidV7Binary(),
     })
     .$returningId();
 
-  return readCategoryById(orThrow(result).id, 'writer');
+  const { id } = orThrow(result);
+  const rows = await db.select().from(categories).where(eq(categories.id, id));
+  return atOrThrow(rows, 0, new NotFoundError(`Cannot found Category(${id.toString()})`));
 }
 
 async function createCategory(

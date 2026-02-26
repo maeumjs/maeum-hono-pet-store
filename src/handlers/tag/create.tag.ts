@@ -2,7 +2,8 @@ import { createRoute } from '@hono/zod-openapi';
 
 import { tagRepository } from '#/repository/database/tag.repository';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { TagInsertSchema, TagSelectSchema } from '#/schema/database/schema.zod';
+import { TagResponseSchema } from '#/schema/database/schema.response.zod';
+import { TagInsertSchema } from '#/schema/database/schema.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
@@ -25,7 +26,7 @@ export const createTagRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: TagSelectSchema.openapi('Tag'),
+          schema: TagResponseSchema.openapi('Tag'),
         },
       },
       description: 'Tag created successfully',
@@ -52,5 +53,5 @@ export const createTagRoute = createRoute({
 export const createTagHandler: RouteHandler<typeof createTagRoute> = async (c) => {
   const body = await c.req.json();
   const result = await tagRepository.createTag(body);
-  return c.json(result, 200);
+  return c.json(TagResponseSchema.parse(result), 200);
 };

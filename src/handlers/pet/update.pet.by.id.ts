@@ -1,13 +1,10 @@
 import { createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
 
-import {
-  petRepository,
-  ReadPetRepositorySchema,
-  UpdatePetRepositorySchema,
-} from '#/repository/database/pet.repository';
+import { petRepository, UpdatePetRepositorySchema } from '#/repository/database/pet.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
+import { PetResponseSchema } from '#/schema/database/schema.response.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
@@ -37,7 +34,7 @@ export const updatePetRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: ReadPetRepositorySchema.openapi('Pet'),
+          schema: PetResponseSchema.openapi('Pet'),
         },
       },
       description: 'Pet update successfully',
@@ -72,5 +69,5 @@ export const updatePetRoute = createRoute({
 export const updatePetHandler: RouteHandler<typeof updatePetRoute> = async (c) => {
   const body = await c.req.json();
   const result = await petRepository.updatePet(BigInt(c.req.param().id), body);
-  return c.json(result, 200);
+  return c.json(PetResponseSchema.parse(result), 200);
 };

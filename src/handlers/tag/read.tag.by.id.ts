@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { tagRepository } from '#/repository/database/tag.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { TagSelectSchema } from '#/schema/database/schema.zod';
+import { TagResponseSchema } from '#/schema/database/schema.response.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
@@ -27,7 +27,7 @@ export const readTagByIdRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: TagSelectSchema.openapi('Tag'),
+          schema: TagResponseSchema.openapi('Tag'),
         },
       },
       description: 'Tag read successfully',
@@ -59,5 +59,5 @@ export const readTagByIdHandler: RouteHandler<typeof readTagByIdRoute> = async (
     return c.json({ code: 'not found', message: 'tag not found' }, 404);
   }
 
-  return c.json(result, 200);
+  return c.json(TagResponseSchema.parse(result), 200);
 };

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { categoryRepository } from '#/repository/database/category.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { CategorySelectSchema } from '#/schema/database/schema.zod';
+import { CategoryResponseSchema } from '#/schema/database/schema.response.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
@@ -27,7 +27,7 @@ export const readCategoryByIdRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: CategorySelectSchema.openapi('Category'),
+          schema: CategoryResponseSchema.openapi('Category'),
         },
       },
       description: 'Tag read successfully',
@@ -61,5 +61,5 @@ export const readCategoryByIdRoute = createRoute({
 
 export const readCategoryByIdHandler: RouteHandler<typeof readCategoryByIdRoute> = async (c) => {
   const result = await categoryRepository.readCategoryById(BigInt(c.req.param().id));
-  return c.json(result, 200);
+  return c.json(CategoryResponseSchema.parse(result), 200);
 };

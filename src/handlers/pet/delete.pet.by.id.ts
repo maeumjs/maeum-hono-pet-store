@@ -1,9 +1,10 @@
 import { createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
 
-import { petRepository, ReadPetRepositorySchema } from '#/repository/database/pet.repository';
+import { petRepository } from '#/repository/database/pet.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
+import { PetResponseSchema } from '#/schema/database/schema.response.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
@@ -26,7 +27,7 @@ export const deletePetRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: ReadPetRepositorySchema.openapi('Pet'),
+          schema: PetResponseSchema.openapi('Pet'),
         },
       },
       description: 'Pet delete successfully',
@@ -60,5 +61,5 @@ export const deletePetRoute = createRoute({
 
 export const deletePetHandler: RouteHandler<typeof deletePetRoute> = async (c) => {
   const result = await petRepository.deletePet(BigInt(c.req.param().id));
-  return c.json(result, 200);
+  return c.json(PetResponseSchema.parse(result), 200);
 };

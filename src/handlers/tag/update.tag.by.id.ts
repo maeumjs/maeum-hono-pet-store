@@ -2,7 +2,8 @@ import { createRoute } from '@hono/zod-openapi';
 
 import { tagRepository } from '#/repository/database/tag.repository';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { TagSelectSchema, TagUpdateSchema } from '#/schema/database/schema.zod';
+import { TagResponseSchema } from '#/schema/database/schema.response.zod';
+import { TagUpdateSchema } from '#/schema/database/schema.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
@@ -32,7 +33,7 @@ export const updateTagByIdRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: TagSelectSchema.openapi('Tag'),
+          schema: TagResponseSchema.openapi('Tag'),
         },
       },
       description: 'Tag created successfully',
@@ -70,5 +71,5 @@ export const updateTagByIdHandler: RouteHandler<typeof updateTagByIdRoute> = asy
 
   const result = await tagRepository.updateTagById(BigInt(params.id), body);
 
-  return c.json(result, 200);
+  return c.json(TagResponseSchema.parse(result), 200);
 };

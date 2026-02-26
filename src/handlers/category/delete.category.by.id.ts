@@ -2,7 +2,8 @@ import { createRoute } from '@hono/zod-openapi';
 
 import { categoryRepository } from '#/repository/database/category.repository';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { CategorySelectSchema, CategoryUpdateSchema } from '#/schema/database/schema.zod';
+import { CategoryResponseSchema } from '#/schema/database/schema.response.zod';
+import { CategoryUpdateSchema } from '#/schema/database/schema.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
@@ -29,7 +30,7 @@ export const deleteCategoryByIdRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: CategorySelectSchema.openapi('Category'),
+          schema: CategoryResponseSchema.openapi('Category'),
         },
       },
       description: 'Tag created successfully',
@@ -65,5 +66,5 @@ export const deleteCategoryByIdHandler: RouteHandler<typeof deleteCategoryByIdRo
   c,
 ) => {
   const result = await categoryRepository.deleteCategoryById(BigInt(c.req.param().id));
-  return c.json(result, 200);
+  return c.json(CategoryResponseSchema.parse(result), 200);
 };

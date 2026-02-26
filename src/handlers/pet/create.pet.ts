@@ -1,11 +1,8 @@
 import { createRoute } from '@hono/zod-openapi';
 
-import {
-  CreatePetRepositorySchema,
-  petRepository,
-  ReadPetRepositorySchema,
-} from '#/repository/database/pet.repository';
+import { CreatePetRepositorySchema, petRepository } from '#/repository/database/pet.repository';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
+import { PetResponseSchema } from '#/schema/database/schema.response.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
@@ -28,7 +25,7 @@ export const createPetRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: ReadPetRepositorySchema.openapi('Pet'),
+          schema: PetResponseSchema.openapi('Pet'),
         },
       },
       description: 'Pet created successfully',
@@ -56,5 +53,5 @@ export const createPetHandler: RouteHandler<typeof createPetRoute> = async (c) =
   const body = await c.req.json();
   const result = await petRepository.createPet(body);
 
-  return c.json(result, 200);
+  return c.json(PetResponseSchema.parse(result), 200);
 };

@@ -3,10 +3,10 @@ import fs from 'node:fs';
 import { eq } from 'drizzle-orm';
 import { atOrThrow, orThrow } from 'my-easy-fp';
 import pathe from 'pathe';
-import { v7 as uuidV7 } from 'uuid';
 
 import { container } from '#/loader';
 import { NotFoundError } from '#/modules/error/not.found.error';
+import { uuidV7Binary } from '#/modules/uuid/uuid.buffer';
 import { photoUrls } from '#/schema/database/schema.drizzle';
 
 import type { z } from 'zod';
@@ -52,7 +52,7 @@ export async function createPhotoUrl(
 
   const [nullableInsertedPhotoUrlId] = await container.db.writer
     .insert(photoUrls)
-    .values({ url: photoUrl, uuid: uuidV7(), petId: BigInt(files.petId) })
+    .values({ url: photoUrl, uuid: uuidV7Binary(), petId: BigInt(files.petId) })
     .$returningId();
   const insertedPhotoUrlId = orThrow(nullableInsertedPhotoUrlId);
   const insertedPhotoUrl = readPhotoUrlById(insertedPhotoUrlId.id, 'writer');

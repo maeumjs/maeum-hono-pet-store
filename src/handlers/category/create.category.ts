@@ -2,7 +2,8 @@ import { createRoute } from '@hono/zod-openapi';
 
 import { categoryRepository } from '#/repository/database/category.repository';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { CategoryInsertSchema, CategorySelectSchema } from '#/schema/database/schema.zod';
+import { CategoryResponseSchema } from '#/schema/database/schema.response.zod';
+import { CategoryInsertSchema } from '#/schema/database/schema.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
@@ -25,7 +26,7 @@ export const createCategoryRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: CategorySelectSchema.openapi('Category'),
+          schema: CategoryResponseSchema.openapi('Category'),
         },
       },
       description: 'Category created successfully',
@@ -53,5 +54,5 @@ export const createCategoryHandler: RouteHandler<typeof createCategoryRoute> = a
   const body = await c.req.json();
   const result = await categoryRepository.createCategory(body);
 
-  return c.json(result, 200);
+  return c.json(CategoryResponseSchema.parse(result), 200);
 };
