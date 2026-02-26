@@ -1,6 +1,7 @@
 import { createRoute } from '@hono/zod-openapi';
 
 import { tagRepository } from '#/repository/database/tag.repository';
+import { RestErrorSchema } from '#/schema/common/rest.error.zod';
 import { TagSelectSchema, TagUpdateSchema } from '#/schema/database/schema.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
@@ -40,6 +41,30 @@ export const modifyTagByIdRoute = createRoute({
       },
       description: 'Tag created successfully',
     },
+    400: {
+      content: {
+        'application/json': {
+          schema: RestErrorSchema.openapi('Error'),
+        },
+      },
+      description: 'Request parameter error or authorization error',
+    },
+    404: {
+      content: {
+        'application/json': {
+          schema: RestErrorSchema.openapi('Error'),
+        },
+      },
+      description: 'Not found',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: RestErrorSchema.openapi('Error'),
+        },
+      },
+      description: 'Internal Server Error',
+    },
   },
 });
 
@@ -49,5 +74,5 @@ export const modifyTagByIdHandler: RouteHandler<typeof modifyTagByIdRoute> = asy
 
   const result = await tagRepository.modifyTagById(BigInt(params.id), body);
 
-  return c.json(result);
+  return c.json(result, 200);
 };

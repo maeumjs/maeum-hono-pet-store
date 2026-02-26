@@ -5,6 +5,7 @@ import { v7 as uuidV7 } from 'uuid';
 import { z } from 'zod';
 
 import { container } from '#/loader';
+import { NotFoundError } from '#/modules/error/not.found.error';
 import { categoryRepository } from '#/repository/database/category.repository';
 import { tagRepository } from '#/repository/database/tag.repository';
 import { categories, pets, petsToTags, photoUrls, tags } from '#/schema/database/schema.drizzle';
@@ -183,7 +184,7 @@ async function readPetById(
   });
 
   if (result == null) {
-    return undefined;
+    throw new NotFoundError(`Cannot found Pet(${id})`);
   }
 
   const selectedPet = omit(

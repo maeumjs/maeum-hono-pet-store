@@ -1,6 +1,7 @@
 import { createRoute } from '@hono/zod-openapi';
 
 import { photoUrlRepository } from '#/repository/database/photo.url.repository';
+import { RestErrorSchema } from '#/schema/common/rest.error.zod';
 import { PhotoUrlSelectSchema } from '#/schema/database/schema.zod';
 import { FileUploadSchema } from '#/schema/repository/repository.zod';
 
@@ -30,7 +31,20 @@ export const uploadImageRoute = createRoute({
       description: '사진 업로드 성공',
     },
     400: {
-      description: '잘못된 파일 형식이거나 요청이 부적절함',
+      content: {
+        'application/json': {
+          schema: RestErrorSchema.openapi('Error'),
+        },
+      },
+      description: 'Request parameter error or authorization error',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: RestErrorSchema.openapi('Error'),
+        },
+      },
+      description: 'Internal Server Error',
     },
   },
 });
@@ -39,5 +53,5 @@ export const uploadImageHandler: RouteHandler<typeof uploadImageRoute> = async (
   const form = c.req.valid('form');
   const result = await photoUrlRepository.createPhotoUrl(form);
 
-  return c.json(result);
+  return c.json(result, 200);
 };

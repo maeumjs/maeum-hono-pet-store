@@ -3,6 +3,7 @@ import { atOrThrow, orThrow } from 'my-easy-fp';
 import { v7 as uuidV7 } from 'uuid';
 
 import { container } from '#/loader';
+import { NotFoundError } from '#/modules/error/not.found.error';
 import { categories } from '#/schema/database/schema.drizzle';
 
 import type z from 'zod';
@@ -18,7 +19,7 @@ import type {
 async function readNullableCategoryById(
   id: bigint,
   use: keyof typeof container.db = 'reader',
-): Promise<z.infer<typeof CategorySelectSchema>[] | undefined> {
+): Promise<z.infer<typeof CategorySelectSchema>[]> {
   // Drizzle ORM으로 tag select
   if (use == null || use === 'reader') {
     return container.db.reader.select().from(categories).where(eq(categories.id, id));
@@ -33,7 +34,7 @@ async function readCategoryById(
 ): Promise<z.infer<typeof CategorySelectSchema>> {
   // Drizzle ORM으로 tag select
   const result = await readNullableCategoryById(id, use);
-  return atOrThrow(result, 0);
+  return atOrThrow(result, 0, new NotFoundError(`Cannot found Category(${id.toString()})`));
 }
 
 async function createCategoryWithDs(

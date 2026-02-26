@@ -6,6 +6,7 @@ import pathe from 'pathe';
 import { v7 as uuidV7 } from 'uuid';
 
 import { container } from '#/loader';
+import { NotFoundError } from '#/modules/error/not.found.error';
 import { photoUrls } from '#/schema/database/schema.drizzle';
 
 import type { z } from 'zod';
@@ -31,7 +32,7 @@ async function readPhotoUrlById(
 ): Promise<z.infer<typeof PhotoUrlSelectSchema>> {
   // Drizzle ORM으로 photo url select
   const result = await readNullablePhotoUrlById(id, use);
-  return atOrThrow(result, 0);
+  return atOrThrow(result, 0, new NotFoundError(`Cannot found PhotoUrl(${id.toString()})`));
 }
 
 export async function createPhotoUrl(

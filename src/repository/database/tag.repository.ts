@@ -3,6 +3,7 @@ import { atOrThrow, orThrow } from 'my-easy-fp';
 import { v7 as uuidV7 } from 'uuid';
 
 import { container } from '#/loader';
+import { NotFoundError } from '#/modules/error/not.found.error';
 import { tags } from '#/schema/database/schema.drizzle';
 
 import type z from 'zod';
@@ -32,8 +33,7 @@ async function readTagById(
 ): Promise<z.infer<typeof TagSelectSchema>> {
   // Drizzle ORM으로 tag select
   const result = await readNullableTagById(id, use);
-
-  return atOrThrow(result, 0);
+  return atOrThrow(result, 0, new NotFoundError(`Cannot found Tag(${id.toString()})`));
 }
 
 async function readTagsByIds(

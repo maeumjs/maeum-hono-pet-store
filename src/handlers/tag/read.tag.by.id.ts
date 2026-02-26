@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { tagRepository } from '#/repository/database/tag.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
+import { RestErrorSchema } from '#/schema/common/rest.error.zod';
 import { TagSelectSchema } from '#/schema/database/schema.zod';
 
 import type { RouteHandler } from '@hono/zod-openapi';
@@ -31,10 +32,32 @@ export const readTagByIdRoute = createRoute({
       },
       description: 'Tag read successfully',
     },
+    404: {
+      content: {
+        'application/json': {
+          schema: RestErrorSchema.openapi('Error'),
+        },
+      },
+      description: 'Tag not found',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: RestErrorSchema.openapi('Error'),
+        },
+      },
+      description: 'Internal Server Error',
+    },
   },
 });
 
 export const readTagByIdHandler: RouteHandler<typeof readTagByIdRoute> = async (c) => {
-  const result = await tagRepository.readTagById(BigInt(c.req.param().id));
-  return c.json(result);
+  const results = await tagRepository.readNullableTagById(BigInt(c.req.param().id));
+  const result = results?.at(0);
+
+  if (result == null) {
+    return c.json({ code: 'not found', message: 'tag not found' }, 404);
+  }
+
+  return c.json(result, 200);
 };
