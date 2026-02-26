@@ -83,7 +83,10 @@ async function handleTags(
           .$returningId()
       : [];
 
-  const insertedTags = await tagRepository.readTagsByIds(insertedTagIds.map((id) => id.id));
+  const insertedTags = await tagRepository.readTagsByIds(
+    insertedTagIds.map((id) => id.id),
+    'writer',
+  );
 
   return {
     selected: selectedTags,
@@ -111,6 +114,7 @@ async function handleCategory(
     .$returningId();
   const insertedCategory = await categoryRepository.readCategoryById(
     orThrow(insertedCategoryId?.id),
+    'writer',
   );
 
   return insertedCategory;
@@ -159,9 +163,12 @@ async function handlePhotoUrls(
 
 async function readPetById(
   id: bigint,
+  use: keyof typeof container.db = 'reader',
 ): Promise<z.infer<typeof ReadPetRepositorySchema> | undefined> {
-  // Drizzle ORM으로 tag select
-  const result = await container.db.writer.query.pets.findFirst({
+  // Drizzle ORM으로 pet select
+  const db = use === 'writer' ? container.db.writer : container.db.reader;
+
+  const result = await db.query.pets.findFirst({
     where: eq(pets.id, id),
     with: {
       category: true, // 1:1 관계
@@ -227,7 +234,7 @@ async function createPet(
     { isolationLevel: 'read committed' },
   );
 
-  const insertedPet = await readPetById(id);
+  const insertedPet = await readPetById(id, 'writer');
   return orThrow(insertedPet);
 }
 
@@ -259,7 +266,7 @@ async function updatePet(
     { isolationLevel: 'read committed' },
   );
 
-  const updatedPet = await readPetById(id);
+  const updatedPet = await readPetById(id, 'writer');
 
   return orThrow(updatedPet);
 }
@@ -301,13 +308,13 @@ async function modifyPet(
     },
   );
 
-  const updatedPet = await readPetById(id);
+  const updatedPet = await readPetById(id, 'writer');
 
   return orThrow(updatedPet);
 }
 
 async function deletePet(id: bigint): Promise<z.infer<typeof ReadPetRepositorySchema>> {
-  const selectedPet = await readPetById(id);
+  const selectedPet = await readPetById(id, 'writer');
 
   if (selectedPet == null) {
     throw new Error(`존재하지 않는 pet(${id}) 입니다`);

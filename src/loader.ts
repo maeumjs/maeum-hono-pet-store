@@ -7,14 +7,12 @@ import { initDotEnv } from '#/modules/initialize/init.dot.env';
 import { initLog } from '#/modules/initialize/init.log';
 import { initPackageJson } from '#/modules/initialize/init.package.json';
 
-import type { AsyncReturnType } from 'type-fest';
-
 async function initialize(): Promise<{
-  config: AsyncReturnType<typeof initConfig>;
-  packageJson: AsyncReturnType<typeof initPackageJson>;
-  logger: AsyncReturnType<typeof initLog>;
+  config: Awaited<ReturnType<typeof initConfig>>;
+  packageJson: Awaited<ReturnType<typeof initPackageJson>>;
+  logger: Awaited<ReturnType<typeof initLog>>;
   app: ReturnType<typeof initApp>;
-  db: AsyncReturnType<typeof initDb>;
+  db: Awaited<ReturnType<typeof initDb>>;
 }> {
   try {
     initDotEnv();

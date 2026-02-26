@@ -17,14 +17,22 @@ import type {
 
 async function readNullableCategoryById(
   id: bigint,
+  use: keyof typeof container.db = 'reader',
 ): Promise<z.infer<typeof CategorySelectSchema>[] | undefined> {
   // Drizzle ORM으로 tag select
+  if (use == null || use === 'reader') {
+    return container.db.reader.select().from(categories).where(eq(categories.id, id));
+  }
+
   return container.db.writer.select().from(categories).where(eq(categories.id, id));
 }
 
-async function readCategoryById(id: bigint): Promise<z.infer<typeof CategorySelectSchema>> {
+async function readCategoryById(
+  id: bigint,
+  use: keyof typeof container.db = 'reader',
+): Promise<z.infer<typeof CategorySelectSchema>> {
   // Drizzle ORM으로 tag select
-  const result = await readNullableCategoryById(id);
+  const result = await readNullableCategoryById(id, use);
   return atOrThrow(result, 0);
 }
 
@@ -43,7 +51,7 @@ async function createCategoryWithDs(
     })
     .$returningId();
 
-  return readCategoryById(orThrow(result).id);
+  return readCategoryById(orThrow(result).id, 'writer');
 }
 
 async function createCategory(
@@ -70,7 +78,7 @@ async function updateCategoryById(
     })
     .where(eq(categories.id, id));
 
-  return readCategoryById(id);
+  return readCategoryById(id, 'writer');
 }
 
 async function deleteCategoryById(
@@ -101,7 +109,7 @@ async function modifyCategoryById(
   // Drizzle ORM으로 category update
   await container.db.writer.update(categories).set({ name: tag.name }).where(eq(categories.id, id));
 
-  return readCategoryById(id);
+  return readCategoryById(id, 'writer');
 }
 
 export const categoryRepository = {

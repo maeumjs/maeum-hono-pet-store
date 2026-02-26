@@ -7,12 +7,11 @@ import { loggerRepository } from '#/repository/logger/logger.respository';
 import * as schema from '#/schema/database/schema.drizzle';
 
 import type { MySql2Database } from 'drizzle-orm/mysql2'; // 타입 변경
-import type { AsyncReturnType } from 'type-fest';
 
 import type { initLog } from '#/modules/initialize/init.log';
 
 export async function initDb(
-  logger: AsyncReturnType<typeof initLog>,
+  logger: Awaited<ReturnType<typeof initLog>>,
 ): Promise<{ writer: MySql2Database<typeof schema>; reader: MySql2Database<typeof schema> }> {
   const host = orThrow(process.env.DB_PET_STORE_HOST, new Error('Cannot found host'));
   const port = parseInt(orThrow(process.env.DB_PET_STORE_PORT, new Error('Cannot found port')), 10);

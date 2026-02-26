@@ -15,14 +15,22 @@ import type { FileUploadSchema } from '#/schema/repository/repository.zod';
 
 async function readNullablePhotoUrlById(
   id: bigint,
+  use: keyof typeof container.db = 'reader',
 ): Promise<z.infer<typeof PhotoUrlSelectSchema>[] | undefined> {
-  // Drizzle ORM으로 tag select
+  // Drizzle ORM으로 photo url select
+  if (use == null || use === 'reader') {
+    return container.db.reader.select().from(photoUrls).where(eq(photoUrls.id, id));
+  }
+
   return container.db.writer.select().from(photoUrls).where(eq(photoUrls.id, id));
 }
 
-async function readPhotoUrlById(id: bigint): Promise<z.infer<typeof PhotoUrlSelectSchema>> {
-  // Drizzle ORM으로 tag select
-  const result = await readNullablePhotoUrlById(id);
+async function readPhotoUrlById(
+  id: bigint,
+  use: keyof typeof container.db = 'reader',
+): Promise<z.infer<typeof PhotoUrlSelectSchema>> {
+  // Drizzle ORM으로 photo url select
+  const result = await readNullablePhotoUrlById(id, use);
   return atOrThrow(result, 0);
 }
 
@@ -46,7 +54,7 @@ export async function createPhotoUrl(
     .values({ url: photoUrl, uuid: uuidV7(), petId: BigInt(files.petId) })
     .$returningId();
   const insertedPhotoUrlId = orThrow(nullableInsertedPhotoUrlId);
-  const insertedPhotoUrl = readPhotoUrlById(insertedPhotoUrlId.id);
+  const insertedPhotoUrl = readPhotoUrlById(insertedPhotoUrlId.id, 'writer');
 
   return insertedPhotoUrl;
 }

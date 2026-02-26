@@ -16,20 +16,35 @@ import type {
 
 async function readNullableTagById(
   id: bigint,
+  use: keyof typeof container.db = 'reader',
 ): Promise<z.infer<typeof TagSelectSchema>[] | undefined> {
   // Drizzle ORM으로 tag select
+  if (use == null || use === 'reader') {
+    return container.db.reader.select().from(tags).where(eq(tags.id, id));
+  }
+
   return container.db.writer.select().from(tags).where(eq(tags.id, id));
 }
 
-async function readTagById(id: bigint): Promise<z.infer<typeof TagSelectSchema>> {
+async function readTagById(
+  id: bigint,
+  use: keyof typeof container.db = 'reader',
+): Promise<z.infer<typeof TagSelectSchema>> {
   // Drizzle ORM으로 tag select
-  const result = await readNullableTagById(id);
+  const result = await readNullableTagById(id, use);
 
   return atOrThrow(result, 0);
 }
 
-async function readTagsByIds(ids: bigint[]): Promise<z.infer<typeof TagSelectSchema>[]> {
+async function readTagsByIds(
+  ids: bigint[],
+  use: keyof typeof container.db = 'reader',
+): Promise<z.infer<typeof TagSelectSchema>[]> {
   // Drizzle ORM으로 tag select
+  if (use == null || use === 'reader') {
+    return container.db.reader.select().from(tags).where(inArray(tags.id, ids));
+  }
+
   return container.db.writer.select().from(tags).where(inArray(tags.id, ids));
 }
 
@@ -44,14 +59,14 @@ async function createTag(
     .values({ uuid, name: tag.name })
     .$returningId();
 
-  return readTagById(orThrow(result).id);
+  return readTagById(orThrow(result).id, 'writer');
 }
 
 async function updateTagById(
   id: bigint,
   tag: z.infer<typeof TagUpdateSchema>,
 ): Promise<z.infer<typeof TagSelectSchema> | undefined> {
-  const result = await readNullableTagById(id);
+  const result = await readNullableTagById(id, 'writer');
 
   if (result == null) {
     return undefined;
@@ -65,11 +80,11 @@ async function updateTagById(
     })
     .where(eq(tags.id, id));
 
-  return readTagById(id);
+  return readTagById(id, 'writer');
 }
 
 async function deleteTagById(id: bigint): Promise<z.infer<typeof TagSelectSchema> | undefined> {
-  const result = await readNullableTagById(id);
+  const result = await readNullableTagById(id, 'writer');
 
   if (result == null) {
     return undefined;
@@ -85,7 +100,7 @@ async function modifyTagById(
   id: bigint,
   tag: z.infer<typeof TagModifySchema>,
 ): Promise<z.infer<typeof TagSelectSchema> | undefined> {
-  const result = await readNullableTagById(id);
+  const result = await readNullableTagById(id, 'writer');
 
   if (result == null) {
     return undefined;
@@ -94,7 +109,7 @@ async function modifyTagById(
   // Drizzle ORM으로 tag update
   await container.db.writer.update(tags).set({ name: tag.name }).where(eq(tags.id, id));
 
-  return atOrThrow(result, 0);
+  return readTagById(id, 'writer');
 }
 
 export const tagRepository = {
