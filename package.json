@@ -29,7 +29,7 @@
     "_uid": "node -e \"console.log(require('crypto').randomUUID().replace(/-/g, ''))\"",
     "uid": "node -e \"console.log(require('crypto').randomUUID())\"",
     "seed": "tsx scripts/seed.ts",
-    "__prepare": "husky install"
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
