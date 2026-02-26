@@ -10,7 +10,8 @@
     "scripts/**/*.ts",
     "eslint.config.mjs",
     "eslint.config.custom.mjs",
-    "resources/**/*.json"
+    "resources/**/*.json",
+    "vitest.config.mts"
   ],
   "exclude": ["tsconfig.json", "tsconfig.eslint.json", "tsconfig.prod.json"]
 }
