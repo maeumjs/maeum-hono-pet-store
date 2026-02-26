@@ -8,6 +8,20 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
     const requestContentType = c.req.header('content-type') ?? '';
     const contentLength = Number.parseInt(c.req.header('content-length') ?? '0', 10);
     const clonedRequest = c.req.raw.clone();
+    const startedAt = Date.now();
+
+    // Log incoming request
+    container.logger.info(
+      {
+        req_id: c.get('requestId'),
+        method: c.req.method,
+        url: c.req.path,
+        params: c.req.param(),
+        content_type: requestContentType,
+        content_length: contentLength,
+      },
+      'Request received',
+    );
 
     await next();
 
@@ -68,6 +82,7 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
       method: c.req.method,
       url: c.req.path,
       params: c.req.param(),
+      elapsed_ms: Date.now() - startedAt,
       req: requestBody,
     };
 
