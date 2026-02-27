@@ -71,7 +71,10 @@ export async function initDb(
   });
 
   // 2. Attach request ID comment middleware to pools
-  const dbMiddlewareOptions = { logger, slowQueryThresholdMs: 1000 };
+  const dbMiddlewareOptions = {
+    logger,
+    slowQueryThresholdMs: parseInt(process.env.DB_PET_STORE_SLOW_QUERY_THRESHOLD ?? '2000', 10),
+  };
   applyRequestIdCommentMiddleware(writerPoolConnection, dbMiddlewareOptions);
   applyRequestIdCommentMiddleware(readerPoolConnection, dbMiddlewareOptions);
 
