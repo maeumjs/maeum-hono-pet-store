@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/mysql2'; // mysql2용 drizzle
 import { orThrow } from 'my-easy-fp';
 import mysql from 'mysql2/promise'; // mysql2 드라이버
 
+import { applyRequestIdCommentMiddleware } from '#/modules/database/request.id.comment.middleware';
 import { loggerRepository } from '#/repository/logger/logger.respository';
 // eslint-disable-next-line import-x/no-namespace
 import * as schema from '#/schema/database/schema.drizzle';
@@ -13,11 +14,35 @@ import type { initLog } from '#/modules/initialize/init.log';
 export async function initDb(
   logger: Awaited<ReturnType<typeof initLog>>,
 ): Promise<{ writer: MySql2Database<typeof schema>; reader: MySql2Database<typeof schema> }> {
-  const host = orThrow(process.env.DB_PET_STORE_HOST, new Error('Cannot found host'));
-  const port = parseInt(orThrow(process.env.DB_PET_STORE_PORT, new Error('Cannot found port')), 10);
-  const database = orThrow(process.env.DB_PET_STORE_DB, new Error('Cannot found db'));
-  const user = orThrow(process.env.DB_PET_STORE_USERNAME, new Error('Cannot found username'));
-  const password = orThrow(process.env.DB_PET_STORE_PASSWORD, new Error('Cannot found passwordd'));
+  const host = orThrow(process.env.DB_PET_STORE_MASTER_HOST, new Error('Cannot found host'));
+  const port = parseInt(
+    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new Error('Cannot found port')),
+    10,
+  );
+  const database = orThrow(process.env.DB_PET_STORE_MASTER_DB, new Error('Cannot found db'));
+  const user = orThrow(
+    process.env.DB_PET_STORE_MASTER_USERNAME,
+    new Error('Cannot found username'),
+  );
+  const password = orThrow(
+    process.env.DB_PET_STORE_MASTER_PASSWORD,
+    new Error('Cannot found passwordd'),
+  );
+
+  const hostSlave = orThrow(process.env.DB_PET_STORE_MASTER_HOST, new Error('Cannot found host'));
+  const portSlave = parseInt(
+    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new Error('Cannot found port')),
+    10,
+  );
+  const databaseSlave = orThrow(process.env.DB_PET_STORE_MASTER_DB, new Error('Cannot found db'));
+  const userSlave = orThrow(
+    process.env.DB_PET_STORE_MASTER_USERNAME,
+    new Error('Cannot found username'),
+  );
+  const passwordSlave = orThrow(
+    process.env.DB_PET_STORE_MASTER_PASSWORD,
+    new Error('Cannot found passwordd'),
+  );
 
   // 1. mysql2 writer 커넥션 풀 생성
   const writerPoolConnection = mysql.createPool({
@@ -34,18 +59,23 @@ export async function initDb(
 
   // 1. mysql2 reader(read-only) 커넥션 풀 생성
   const readerPoolConnection = mysql.createPool({
-    host,
-    port,
-    database,
-    user,
-    password,
+    host: hostSlave,
+    port: portSlave,
+    database: databaseSlave,
+    user: userSlave,
+    password: passwordSlave,
     // Master-Slave 구조나 Connection Pool 설정을 여기서 추가할 수 있습니다.
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
   });
 
-  // 2. Drizzle 인스턴스 생성 (mysql2용)
+  // 2. Attach request ID comment middleware to pools
+  const dbMiddlewareOptions = { logger, slowQueryThresholdMs: 1000 };
+  applyRequestIdCommentMiddleware(writerPoolConnection, dbMiddlewareOptions);
+  applyRequestIdCommentMiddleware(readerPoolConnection, dbMiddlewareOptions);
+
+  // 3. Drizzle 인스턴스 생성 (mysql2용)
   const writer = drizzle(writerPoolConnection, { schema, mode: 'default' });
   const reader = drizzle(readerPoolConnection, { schema, mode: 'default' });
 

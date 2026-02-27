@@ -9,8 +9,7 @@
   },
   "scripts": {
     "dk": "drizzle-kit",
-    "rs": "run-p route nozzle-refresh",
-    "build-script": "tsc --project ./tsconfig.json  --incremental --noEmit",
+    "build-script": "tsc --project ./tsconfig.json --incremental --noEmit",
     "build": "run-s clean build-script",
     "alias-script": "tsc-alias --project tsconfig.prod.json",
     "bundle-script": "cross-env FORMAT=esm node .configs/esbuild.mjs",
