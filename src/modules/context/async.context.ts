@@ -9,7 +9,7 @@ export interface IAsyncContext {
 export const asyncContext = new AsyncLocalStorage<IAsyncContext>();
 
 export function getRequestId(): string | undefined {
-  return asyncContext.getStore()?.requestId;
+  return asyncContext.getStore()?.uid ?? asyncContext.getStore()?.requestId;
 }
 
 export function getContext(): IAsyncContext | undefined {
