@@ -1,5 +1,7 @@
 import { Writable } from 'node:stream';
 
+import chalk from 'chalk';
+
 import type pino from 'pino';
 
 const LEVEL_LABELS: Record<number, string> = {
@@ -10,6 +12,34 @@ const LEVEL_LABELS: Record<number, string> = {
   50: 'error',
   60: 'fatal',
 };
+
+function getColor(level: string) {
+  if (level === 'INFO') {
+    return chalk.yellowBright(level);
+  }
+
+  if (level === 'WARN') {
+    return chalk.yellowBright(level);
+  }
+
+  if (level === 'ERROR') {
+    return chalk.redBright(level);
+  }
+
+  if (level === 'FATAL') {
+    return chalk.redBright(level);
+  }
+
+  if (level === 'DEBUG') {
+    return chalk.gray(level);
+  }
+
+  if (level === 'TRACE') {
+    return chalk.gray(level);
+  }
+
+  return level;
+}
 
 /**
  * Creates a console transport that prints only timestamp, level, and message.
@@ -25,7 +55,7 @@ export function createConsoleTransport(): pino.StreamEntry {
         const msg = typeof log.msg === 'string' ? log.msg : '';
 
         // eslint-disable-next-line no-console
-        console.log(`[${time}] ${level.toUpperCase()} ${msg}`);
+        console.log(`[${time}] ${getColor(level.toUpperCase())} ${msg}`);
       } catch {
         // ignore malformed log lines
       }

@@ -153,4 +153,18 @@ describe('tagRepository', () => {
       'Cannot found Tag',
     );
   });
+
+  // -------------------------------------------------------------------------
+  it('reads multiple tags by ids via writer db (writer branch)', async () => {
+    // line 48: use === 'writer' branch in readTagsByIds
+    const [a, b] = await Promise.all([
+      tagRepository.createTag({ name: 'writer-tag-a' }),
+      tagRepository.createTag({ name: 'writer-tag-b' }),
+    ]);
+
+    const found = await tagRepository.readTagsByIds([a.id, b.id], 'writer');
+
+    expect(found).toHaveLength(2);
+    expect(found.map((t) => t.name).sort()).toEqual(['writer-tag-a', 'writer-tag-b']);
+  });
 });

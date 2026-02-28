@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+
 import { MySqlContainer } from '@testcontainers/mysql';
 import { drizzle } from 'drizzle-orm/mysql2';
 import mysql from 'mysql2/promise';
@@ -22,6 +24,10 @@ vi.mock('#/loader', () => ({
     };
   },
 }));
+
+// Mock fs.promises so createPhotoUrl does not touch the real filesystem
+vi.spyOn(fs.promises, 'mkdir').mockResolvedValue(undefined);
+vi.spyOn(fs.promises, 'writeFile').mockResolvedValue(undefined);
 
 const { photoUrlRepository } = await import('#/repository/database/photo.url.repository');
 const { petRepository } = await import('#/repository/database/pet.repository');
@@ -153,5 +159,53 @@ describe('photoUrlRepository', () => {
     const firstResult = result?.at(0);
     assert(firstResult != null);
     expect(firstResult.url).toBe('http://example.com/photo2.jpg');
+  });
+
+  // -------------------------------------------------------------------------
+  it('reads a photo url via writer db (writer branch)', async () => {
+    // line 26: use === 'writer' branch in readNullablePhotoUrlById
+    const pet = await petRepository.createPet({
+      name: 'PetWithPhoto3',
+      status: 1,
+      category: { name: 'Turtle' },
+      tags: [],
+      photoUrls: ['http://example.com/photo3.jpg'],
+    });
+
+    const firstPhoto = pet.photoUrls.at(0);
+    assert(firstPhoto != null);
+
+    const result = await photoUrlRepository.readNullablePhotoUrlById(firstPhoto.id, 'writer');
+    const firstResult = result?.at(0);
+    assert(firstResult != null);
+    expect(firstResult.url).toBe('http://example.com/photo3.jpg');
+
+    const found = await photoUrlRepository.readPhotoUrlById(firstPhoto.id, 'writer');
+    expect(found.id).toEqual(firstPhoto.id);
+  });
+
+  // -------------------------------------------------------------------------
+  it('creates a photo url from an uploaded file', async () => {
+    // lines 41-60: createPhotoUrl (fs mocked above)
+    const pet = await petRepository.createPet({
+      name: 'PetForUpload',
+      status: 1,
+      category: { name: 'Frog' },
+      tags: [],
+      photoUrls: [],
+    });
+
+    const mockFile = {
+      name: 'test-image.jpg',
+      stream: () => Buffer.from('fake-image-data'),
+    } as unknown as File;
+
+    const created = await photoUrlRepository.createPhotoUrl({
+      file: mockFile,
+      petId: pet.id.toString(),
+    });
+
+    expect(created.url).toContain('test-image.jpg');
+    expect(created.petId).toEqual(pet.id);
   });
 });

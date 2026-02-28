@@ -8,7 +8,7 @@ const LONG_MAX = BigInt('9223372036854775807');
 const ULONG_MIN = BigInt('0');
 const ULONG_MAX = BigInt('18446744073709551615'); // 2^64 - 1
 
-const SignedLongBigIntSchema = z
+export const SignedLongBigIntSchema = z
   .string()
   .regex(/^-?\d+$/)
   .transform((v) => BigInt(v))
@@ -16,7 +16,7 @@ const SignedLongBigIntSchema = z
     message: 'Value is out of 64-bit unsigned integer range',
   });
 
-const UnsignedLongBigIntSchema = z
+export const UnsignedLongBigIntSchema = z
   .string()
   .regex(/^\d+$/) // 부호(-)가 없는 숫자만 허용
   .transform((v) => BigInt(v))

@@ -1,60 +1,29 @@
-import { and, eq, inArray, ne } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { orThrow } from 'my-easy-fp';
-import { omit } from 'radash';
-import { z } from 'zod';
+import { omit, shake } from 'radash';
 
 import { container } from '#/loader';
 import { NotFoundError } from '#/modules/error/not.found.error';
 import { uuidV7Binary } from '#/modules/uuid/uuid.buffer';
 import { categoryRepository } from '#/repository/database/category.repository';
 import { categories, pets, petsToTags, photoUrls, tags } from '#/schema/database/schema.drizzle';
-import {
-  CategorySelectSchema,
-  PetInsertSchema,
-  PetSelectSchema,
-  PhotoUrlSelectSchema,
-  TagSelectSchema,
-} from '#/schema/database/schema.zod';
+
+import type { z } from 'zod';
 
 import type { TDataSource } from '#/schema/database/schema.type';
+import type { CreatePetRepositorySchema } from '#/schema/repository/pet/create.pet.repository.schema';
+import type { ModifyPetRepositorySchema } from '#/schema/repository/pet/modify.pet.repository.schema';
+import type { ReadPetRepositorySchema } from '#/schema/repository/pet/read.pet.repository.schema';
+import type { UpdatePetRepositorySchema } from '#/schema/repository/pet/update.pet.repository.schema';
 
-export const CreatePetRepositorySchema = PetInsertSchema.omit({
-  categoryId: true,
-  id: true,
-}).extend({
-  category: CategorySelectSchema.pick({ name: true }),
-  tags: z.array(
-    z.union([TagSelectSchema.pick({ id: true }), TagSelectSchema.pick({ name: true })]),
-  ),
-  photoUrls: z.array(PhotoUrlSelectSchema.shape.url),
-});
-
-export const UpdatePetRepositorySchema = PetInsertSchema.omit({
-  categoryId: true,
-  id: true,
-}).extend({
-  category: z.union([
-    CategorySelectSchema.pick({ id: true }),
-    CategorySelectSchema.pick({ name: true }),
-  ]),
-  tags: z.array(
-    z.union([TagSelectSchema.pick({ id: true }), TagSelectSchema.pick({ name: true })]),
-  ),
-  photoUrls: z.array(PhotoUrlSelectSchema.shape.url),
-});
-
-export const ModifyPetRepositorySchema = UpdatePetRepositorySchema.partial();
-
-export const ReadPetRepositorySchema = PetSelectSchema.omit({ categoryId: true }).extend({
-  category: CategorySelectSchema,
-  tags: z.array(TagSelectSchema),
-  photoUrls: z.array(PhotoUrlSelectSchema.omit({ petId: true })),
-});
-
-async function handleTags(
+export async function handleTags(
   db: TDataSource,
   values: z.infer<typeof UpdatePetRepositorySchema>['tags'],
-) {
+): Promise<{
+  selected: z.infer<typeof ReadPetRepositorySchema>['tags'];
+  inserted: z.infer<typeof ReadPetRepositorySchema>['tags'];
+  all: z.infer<typeof ReadPetRepositorySchema>['tags'];
+}> {
   const existsTagIds = values.flatMap((tag) => ('id' in tag ? [tag.id] : []));
   const selectedTags =
     existsTagIds.length > 0
@@ -94,10 +63,10 @@ async function handleTags(
   };
 }
 
-async function handleCategory(
+export async function handleCategory(
   db: TDataSource,
   category: z.infer<typeof UpdatePetRepositorySchema>['category'],
-) {
+): Promise<z.infer<typeof ReadPetRepositorySchema>['category']> {
   if ('id' in category) {
     const selectedCategory = await db.query.categories.findFirst({
       where: eq(categories.id, category.id),
@@ -165,7 +134,7 @@ async function handlePhotoUrls(
 async function readPetById(
   id: bigint,
   use: keyof typeof container.db = 'reader',
-): Promise<z.infer<typeof ReadPetRepositorySchema> | undefined> {
+): Promise<z.infer<typeof ReadPetRepositorySchema>> {
   // Drizzle ORM으로 pet select
   const db = use === 'writer' ? container.db.writer : container.db.reader;
 
@@ -285,7 +254,7 @@ async function modifyPet(
   const selectedPet = await container.db.writer.query.pets.findFirst({ where: eq(pets.id, id) });
 
   if (selectedPet == null) {
-    throw new Error(`존재하지 않는 pet(${id}) 입니다`);
+    throw new NotFoundError(`존재하지 않는 pet(${id}) 입니다`);
   }
 
   await container.db.writer.transaction(
@@ -301,14 +270,12 @@ async function modifyPet(
         await handlePhotoUrls(tx, id, pet.photoUrls);
       }
 
-      await tx
-        .update(pets)
-        .set({
-          name: pet.name,
-          status: pet.status,
-          categoryId,
-        })
-        .where(eq(pets.id, id));
+      if (pet.name != null || pet.status != null || categoryId != null) {
+        await tx
+          .update(pets)
+          .set(shake({ name: pet.name, status: pet.status, categoryId }, (v) => v == null))
+          .where(eq(pets.id, id));
+      }
     },
     {
       isolationLevel: 'read committed',
@@ -322,10 +289,6 @@ async function modifyPet(
 
 async function deletePet(id: bigint): Promise<z.infer<typeof ReadPetRepositorySchema>> {
   const selectedPet = await readPetById(id, 'writer');
-
-  if (selectedPet == null) {
-    throw new Error(`존재하지 않는 pet(${id}) 입니다`);
-  }
 
   await container.db.writer.transaction(async (tx) => {
     // 1. 삭제할 펫이 가진 태그 ID 목록을 먼저 확보 (Dangling Tag 체크용)
@@ -357,21 +320,6 @@ async function deletePet(id: bigint): Promise<z.infer<typeof ReadPetRepositorySc
     // 5. Pet 정보 조회 (카테고리 ID 확보용)
     // 6. Pet 삭제
     await tx.delete(pets).where(eq(pets.id, id));
-
-    // 7. Dangling Category 삭제
-    // 카테고리도 태그와 마찬가지로 이 카테고리를 쓰는 다른 펫이 있는지 확인 후 삭제
-    if (selectedPet.category.id) {
-      const otherPetWithCategory = await tx.query.pets.findFirst({
-        where: and(
-          eq(pets.categoryId, selectedPet.category.id),
-          ne(pets.id, id), // 자기 자신 제외
-        ),
-      });
-
-      if (!otherPetWithCategory) {
-        await tx.delete(categories).where(eq(categories.id, selectedPet.category.id));
-      }
-    }
   });
 
   return selectedPet;

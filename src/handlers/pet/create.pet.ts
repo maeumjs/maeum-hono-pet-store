@@ -1,8 +1,9 @@
 import { createRoute } from '@hono/zod-openapi';
 
-import { CreatePetRepositorySchema, petRepository } from '#/repository/database/pet.repository';
+import { petRepository } from '#/repository/database/pet.repository';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
 import { PetResponseSchema } from '#/schema/database/schema.response.zod';
+import { CreatePetRepositorySchema } from '#/schema/repository/pet/create.pet.repository.schema';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 

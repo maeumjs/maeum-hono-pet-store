@@ -1,10 +1,11 @@
 import { createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
 
-import { petRepository, UpdatePetRepositorySchema } from '#/repository/database/pet.repository';
+import { petRepository } from '#/repository/database/pet.repository';
 import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
 import { RestErrorSchema } from '#/schema/common/rest.error.zod';
 import { PetResponseSchema } from '#/schema/database/schema.response.zod';
+import { UpdatePetRepositorySchema } from '#/schema/repository/pet/update.pet.repository.schema';
 
 import type { RouteHandler } from '@hono/zod-openapi';
 
