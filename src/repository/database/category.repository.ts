@@ -64,11 +64,11 @@ async function createCategory(
 async function updateCategoryById(
   id: bigint,
   tag: z.infer<typeof CategoryUpdateSchema>,
-): Promise<z.infer<typeof CategorySelectSchema> | undefined> {
+): Promise<z.infer<typeof CategorySelectSchema>> {
   const result = await readNullableCategoryById(id);
 
-  if (result == null) {
-    return undefined;
+  if (result.length <= 0) {
+    throw new NotFoundError(`Cannot found Category(${id.toString()})`);
   }
 
   // Drizzle ORM으로 tag update
@@ -82,13 +82,11 @@ async function updateCategoryById(
   return readCategoryById(id, 'writer');
 }
 
-async function deleteCategoryById(
-  id: bigint,
-): Promise<z.infer<typeof CategorySelectSchema> | undefined> {
+async function deleteCategoryById(id: bigint): Promise<z.infer<typeof CategorySelectSchema>> {
   const result = await readNullableCategoryById(id);
 
-  if (result == null) {
-    return undefined;
+  if (result.length <= 0) {
+    throw new NotFoundError(`Cannot found Category(${id.toString()})`);
   }
 
   // Drizzle ORM으로 tag delete
@@ -100,11 +98,11 @@ async function deleteCategoryById(
 async function modifyCategoryById(
   id: bigint,
   tag: z.infer<typeof CategoryModifySchema>,
-): Promise<z.infer<typeof CategorySelectSchema> | undefined> {
+): Promise<z.infer<typeof CategorySelectSchema>> {
   const result = await readNullableCategoryById(id);
 
-  if (result == null) {
-    return undefined;
+  if (result.length <= 0) {
+    throw new NotFoundError(`Cannot found Category(${id.toString()})`);
   }
 
   // Drizzle ORM으로 category update

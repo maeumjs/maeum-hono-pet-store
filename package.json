@@ -24,7 +24,7 @@
     "route": "cross-env NODE_ENV=production fast-maker route --config .configs/.fastmakerrc",
     "start:withoutpm2": "TZ=Asia/Seoul node --enable-source-maps -r ./dist/loader dist/listen.js",
     "start": "TZ=Asia/Seoul ./node_modules/pm2/bin/pm2-runtime -s start .configs/pm2.config.cjs > /dev/null",
-    "test": "cross-env DEBUG=maeum:* RUN_ON_TESTCASE=true node -r ts-node/register ./node_modules/.bin/jest --detectOpenHandles",
+    "test": "cross-env DEBUG=maeum:* vitest run",
     "dd": "deps-diff md -d prod -d dev --title-list-type 'm' --deps-list-type 'm' --content-list-type 'm'",
     "_uid": "node -e \"console.log(require('crypto').randomUUID().replace(/-/g, ''))\"",
     "uid": "node -e \"console.log(require('crypto').randomUUID())\"",

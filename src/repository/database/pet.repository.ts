@@ -219,18 +219,22 @@ async function createPet(
         .$returningId();
       const insertedPetId = orThrow(nullableInsertedPetId);
 
-      await tx
-        .insert(photoUrls)
-        .values(
-          pet.photoUrls.map((url) => ({ url, uuid: uuidV7Binary(), petId: insertedPetId.id })),
-        );
+      if (pet.photoUrls.length > 0) {
+        await tx
+          .insert(photoUrls)
+          .values(
+            pet.photoUrls.map((url) => ({ url, uuid: uuidV7Binary(), petId: insertedPetId.id })),
+          );
+      }
 
-      await tx.insert(petsToTags).values(
-        insertedTags.all.map((tag) => ({
-          petId: insertedPetId.id,
-          tagId: tag.id,
-        })),
-      );
+      if (insertedTags.all.length > 0) {
+        await tx.insert(petsToTags).values(
+          insertedTags.all.map((tag) => ({
+            petId: insertedPetId.id,
+            tagId: tag.id,
+          })),
+        );
+      }
 
       return insertedPetId.id;
     },

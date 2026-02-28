@@ -63,11 +63,11 @@ async function createTag(
 async function updateTagById(
   id: bigint,
   tag: z.infer<typeof TagUpdateSchema>,
-): Promise<z.infer<typeof TagSelectSchema> | undefined> {
+): Promise<z.infer<typeof TagSelectSchema>> {
   const result = await readNullableTagById(id, 'writer');
 
-  if (result == null) {
-    return undefined;
+  if (result == null || result.length <= 0) {
+    throw new NotFoundError(`Cannot found Tag(${id.toString()})`);
   }
 
   // Drizzle ORM으로 tag update
@@ -81,11 +81,11 @@ async function updateTagById(
   return readTagById(id, 'writer');
 }
 
-async function deleteTagById(id: bigint): Promise<z.infer<typeof TagSelectSchema> | undefined> {
+async function deleteTagById(id: bigint): Promise<z.infer<typeof TagSelectSchema>> {
   const result = await readNullableTagById(id, 'writer');
 
-  if (result == null) {
-    return undefined;
+  if (result == null || result.length <= 0) {
+    throw new NotFoundError(`Cannot found Tag(${id.toString()})`);
   }
 
   // Drizzle ORM으로 tag delete
@@ -97,11 +97,11 @@ async function deleteTagById(id: bigint): Promise<z.infer<typeof TagSelectSchema
 async function modifyTagById(
   id: bigint,
   tag: z.infer<typeof TagModifySchema>,
-): Promise<z.infer<typeof TagSelectSchema> | undefined> {
+): Promise<z.infer<typeof TagSelectSchema>> {
   const result = await readNullableTagById(id, 'writer');
 
-  if (result == null) {
-    return undefined;
+  if (result == null || result.length <= 0) {
+    throw new NotFoundError(`Cannot found Tag(${id.toString()})`);
   }
 
   // Drizzle ORM으로 tag update
