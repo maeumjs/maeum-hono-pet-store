@@ -1,20 +1,30 @@
 import { defineConfig } from 'drizzle-kit';
 import { orThrow } from 'my-easy-fp';
 
+import { ConfigurationError } from './src/modules/error/configuration.error';
 import { initDotEnv } from './src/modules/initialize/init.dot.env';
 
 initDotEnv();
 
-const host = orThrow(process.env.DB_PET_STORE_MASTER_HOST, new Error('Cannot found host'));
+const host = orThrow(
+  process.env.DB_PET_STORE_MASTER_HOST,
+  new ConfigurationError('Cannot found host'),
+);
 const port = parseInt(
-  orThrow(process.env.DB_PET_STORE_MASTER_PORT, new Error('Cannot found port')),
+  orThrow(process.env.DB_PET_STORE_MASTER_PORT, new ConfigurationError('Cannot found port')),
   10,
 );
-const database = orThrow(process.env.DB_PET_STORE_MASTER_DB, new Error('Cannot found db'));
-const user = orThrow(process.env.DB_PET_STORE_MASTER_USERNAME, new Error('Cannot found username'));
+const database = orThrow(
+  process.env.DB_PET_STORE_MASTER_DB,
+  new ConfigurationError('Cannot found db'),
+);
+const user = orThrow(
+  process.env.DB_PET_STORE_MASTER_USERNAME,
+  new ConfigurationError('Cannot found username'),
+);
 const password = orThrow(
   process.env.DB_PET_STORE_MASTER_PASSWORD,
-  new Error('Cannot found passwordd'),
+  new ConfigurationError('Cannot found passwordd'),
 );
 
 console.log('Start drizzle-kit');

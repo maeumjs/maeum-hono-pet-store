@@ -54,8 +54,8 @@ importers:
         specifier: ^3.2.1
         version: 3.2.1
       my-easy-fp:
-        specifier: ^0.22.0
-        version: 0.22.0
+        specifier: ^0.23.0
+        version: 0.23.0
       my-node-fp:
         specifier: ^0.10.3
         version: 0.10.3
@@ -3966,6 +3966,10 @@ packages:
   my-easy-fp@0.22.0:
     resolution: {integrity: sha512-fWM/HrbfUiBt8GcwMXad5r8s2urQezRqNiaa5GispeXGKptpaz5m+NUwBazkow5oxktZGWyQj1bSx40xtq00zg==}
     engines: {node: '>=16'}
+
+  my-easy-fp@0.23.0:
+    resolution: {integrity: sha512-HuPwdf6H398qK15nHJY2JFRoGXpuoWwPwM94tdMA2yE5/NjTNsnlhCydKJrspyrI3lj+uY3GckxcPQ28qJrnmQ==}
+    engines: {node: '>=20'}
 
   my-node-fp@0.10.3:
     resolution: {integrity: sha512-LXTord8vAfBCP4nX1Ct/d7jXuWxeiFvDwmX+HCiLHIoNhzxg7CaippiPZV8MQ/nfX9pXSf6jpJLr/fs5QHjwKw==}
@@ -9438,6 +9442,8 @@ snapshots:
   my-easy-fp@0.19.3: {}
 
   my-easy-fp@0.22.0: {}
+
+  my-easy-fp@0.23.0: {}
 
   my-node-fp@0.10.3:
     dependencies:

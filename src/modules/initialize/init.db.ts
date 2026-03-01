@@ -3,6 +3,7 @@ import { orThrow } from 'my-easy-fp';
 import mysql from 'mysql2/promise'; // mysql2 드라이버
 
 import { applyRequestIdCommentMiddleware } from '#/modules/database/request.id.comment.middleware';
+import { ConfigurationError } from '#/modules/error/configuration.error';
 import { loggerRepository } from '#/repository/logger/logger.respository';
 // eslint-disable-next-line import-x/no-namespace
 import * as schema from '#/schema/database/schema.drizzle';
@@ -14,34 +15,46 @@ import type { initLog } from '#/modules/initialize/init.log';
 export async function initDb(
   logger: Awaited<ReturnType<typeof initLog>>,
 ): Promise<{ writer: MySql2Database<typeof schema>; reader: MySql2Database<typeof schema> }> {
-  const host = orThrow(process.env.DB_PET_STORE_MASTER_HOST, new Error('Cannot found host'));
+  const host = orThrow(
+    process.env.DB_PET_STORE_MASTER_HOST,
+    new ConfigurationError('Cannot found host'),
+  );
   const port = parseInt(
-    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new Error('Cannot found port')),
+    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new ConfigurationError('Cannot found port')),
     10,
   );
-  const database = orThrow(process.env.DB_PET_STORE_MASTER_DB, new Error('Cannot found db'));
+  const database = orThrow(
+    process.env.DB_PET_STORE_MASTER_DB,
+    new ConfigurationError('Cannot found db'),
+  );
   const user = orThrow(
     process.env.DB_PET_STORE_MASTER_USERNAME,
-    new Error('Cannot found username'),
+    new ConfigurationError('Cannot found username'),
   );
   const password = orThrow(
     process.env.DB_PET_STORE_MASTER_PASSWORD,
-    new Error('Cannot found passwordd'),
+    new ConfigurationError('Cannot found passwordd'),
   );
 
-  const hostSlave = orThrow(process.env.DB_PET_STORE_MASTER_HOST, new Error('Cannot found host'));
+  const hostSlave = orThrow(
+    process.env.DB_PET_STORE_MASTER_HOST,
+    new ConfigurationError('Cannot found host'),
+  );
   const portSlave = parseInt(
-    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new Error('Cannot found port')),
+    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new ConfigurationError('Cannot found port')),
     10,
   );
-  const databaseSlave = orThrow(process.env.DB_PET_STORE_MASTER_DB, new Error('Cannot found db'));
+  const databaseSlave = orThrow(
+    process.env.DB_PET_STORE_MASTER_DB,
+    new ConfigurationError('Cannot found db'),
+  );
   const userSlave = orThrow(
     process.env.DB_PET_STORE_MASTER_USERNAME,
-    new Error('Cannot found username'),
+    new ConfigurationError('Cannot found username'),
   );
   const passwordSlave = orThrow(
     process.env.DB_PET_STORE_MASTER_PASSWORD,
-    new Error('Cannot found passwordd'),
+    new ConfigurationError('Cannot found passwordd'),
   );
 
   // 1. mysql2 writer 커넥션 풀 생성
