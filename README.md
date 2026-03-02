@@ -1,80 +1,542 @@
-# Maeum
+# Maeum Hono Pet Store
 
-마음(Maeum)은 fastify.js를 사용한 보일러플레이트입니다. 마음은 fastify.js를 사용했을 때 좋은 사용례(best practice)를 공유하고 싶어서 개발하고 공개한 보일러플레이트입니다. 협업을 할 때 불편함이 없고, 최상의 경험을 하기 위해서 다양한 요소를 고려한 다양한 노하우가 축적된 보일러플레이트가 궁금하다면 마음을 사용해보세요. 마음은 다음과 같은 목표를 가지고 설계, 개발 됩니다.
+> Enterprise-grade Pet Store API boilerplate built with Hono.js
 
-1. 타입 안정성: 타입 안정성을 지향
-2. 파일 시스템 기반 라우팅
-3. 타입스크립트 인터페이스, 타입 별칭에서 JSON Schema 자동생성
-4. 정적분석: 작성된 모든 코드가 정적 분석이 가능하도록 설계
-5. 마음을 사용하기 위한 추가 코드가 없음: fastify.js, TypeORM 등의 본래 기능을 활용
+Maeum Hono Pet Store is a production-ready boilerplate that demonstrates best practices for building modern REST APIs. Built on top of the ultra-fast Hono.js framework, it provides a solid foundation for developing scalable, maintainable, and type-safe web applications.
 
-기본 기능을 변경하지 않아서 추가로 학습할 필요가 없고, 타입 안정성을 지향하는 것이 마음의 목표입니다.
+## 🚀 Features
 
-## Why fastify.js?
+### Core Framework & Architecture
 
-express.js는 좋은 프레임워크이지만 꽤 오랫동안 기능추가가 없었습니다. 또한 일반적으로 많은 상황에서 아쉬운 성능을 보여줄 때가 있습니다. 그외에도 async/await 지원이 아직 불완전한점, validation 지원이 없는점 등 다양한 부분에서 아쉬운점이 있습니다. koa.js는 express.js의 단점을 보완했지만 route 설정을 기본 기능으로 지원하지 않는 점등 역시 아쉬운점이 있습니다.
+- **[Hono.js](https://hono.dev/)** - Ultra-fast web framework for the edge
+- **TypeScript** - Full type safety throughout the application
+- **Layered Architecture** - Clean separation of concerns with handlers, repositories, and services
+- **OpenAPI Integration** - Automatic API documentation with `@hono/zod-openapi`
 
-fastify.js는 express.js와 koa.js의 아쉬운점을 잘 보완한 unopinionated 웹 프레임워크 입니다. fastify.js라고 아쉬운점이 없는 것은 아니지만 현재까지는 좋은 모습을 보여주고 최근에 출시된 웹 프레임워크라서 기본 기능도 충실합니다. 또한 JSONSchema를 기본으로 지원하고, JSONSchema를 Swagger.io 문서로 자동으로 변환하는 등 프레임워크 자체 기능도 충실합니다. 그래서 마음(Maeum)은 fastify.js만 사용합니다. 다른 프레임워크를 지원하는 것은 아직까지는 예정에 없습니다.
+### Database & ORM
 
-## Request/Response flow
+- **[Drizzle ORM](https://orm.drizzle.team/)** - Type-safe SQL toolkit
+- **MySQL** - Robust relational database support
+- **Schema Validation** - Runtime validation with Zod schemas
+- **Database Migrations** - Version-controlled schema changes
 
-함수형 설계를 사용하기 때문에 Request는 함수의 흐름으로 처리됩니다. 우수한 MVC 아키텍처의 용어를 빌리지만 결과적으로는 함수형 프로그래밍에 가깝게 처리됩니다. Request/Response flow는 종국에는 [pipe operator](https://github.com/tc39/proposal-pipeline-operator)로 여러 함수가 하나의 함수로 결합되는 것을 목표로 합니다.
+### Development Experience
 
-```mermaid
-graph TD
-    A01[User]
-    A02[Request<BR /> JSONSchema validation]
-    A03[Data Transfer function]
-    A04[Data Process function]
-    A05[Response<BR /> JSON serialization function]
-    A06[Response<BR /> JSONSchema validation]
+- **Hot Reload** - Fast development with nodemon
+- **Path Aliases** - Clean imports with TypeScript path mapping (`#/*`)
+- **ESBuild** - Lightning-fast bundling
+- **Comprehensive Testing** - Unit and integration tests with Vitest
+- **Test Containers** - Isolated database testing with @testcontainers/mysql
 
-    A01-->|Request|A02
-    A02-->|Request, Validation Result|A03
-    A03-->|Request, Validation Result,<BR /> Transfered Data|A04
-    A04-->|Request, Validation Result,<BR /> Transfered Data, Response JSON|A05
-    A05-->|Response JSON|A06
-    A06-->A01
+### Code Quality & Standards
+
+- **ESLint** - Extended Airbnb configuration with custom rules
+- **Prettier** - Consistent code formatting
+- **Husky** - Pre-commit hooks for code quality
+- **Lint-staged** - Run linters on staged files only
+- **TypeScript Strict Mode** - Maximum type safety
+
+### Production Ready
+
+- **Docker Support** - Multi-stage build with optimized production image
+- **PM2 Integration** - Process management and clustering
+- **Structured Logging** - Pino logger with request tracing
+- **Error Handling** - Comprehensive error hierarchy with HTTP status codes
+- **Health Checks** - Built-in health monitoring endpoints
+
+## 📁 Project Structure
+
+```text
+src/
+├── handlers/           # HTTP request handlers (controllers)
+│   ├── category/       # Category management endpoints
+│   ├── pet/           # Pet management endpoints
+│   ├── tag/           # Tag management endpoints
+│   └── health/        # Health check endpoints
+├── repository/        # Data access layer
+│   ├── database/      # Database repositories
+│   └── logger/        # Logging repository
+├── schema/            # Zod schemas and validation
+│   ├── database/      # Database schema definitions
+│   ├── repository/    # Repository input/output schemas
+│   ├── configuration/ # Configuration schemas
+│   └── common/        # Shared schema utilities
+├── modules/           # Core application modules
+│   ├── error/         # Custom error classes
+│   ├── middleware/    # Custom middleware
+│   ├── initialize/    # Application initialization
+│   └── context/       # Async context management
+└── app.ts            # Application entry point
 ```
 
-### Request JSONSchema validation
+## 🛠️ Quick Start
 
-fastify.js에 JSONSchema를 등록하면 자동으로 처리됩니다. 정적 데이터 검증을 처리합니다.
+### Prerequisites
 
-### Data Transfer function
+- Node.js >= 22
+- PNPM >= 9.1.0
+- MySQL 8.0+
 
-Database 또는 다른 RESTful API 서버 등에서 데이터를 가져오는 과정입니다. 어떤 방식으로든 다른 데이터 원천에서 데이터를 가져옵니다. MVC 아키텍처에서 DTO라고 불리는 단계입니다.
+### Installation
 
-### Data Process function
+1. **Clone the repository**
 
-응답하기 위해 데이터를 가공합니다. 응답하기 위해서 JSON을 만드는 과정은 아닙니다. 예를들면 Database에서 읽은 데이터 합산 결과를 추가하거나 분리된 URL을 결합하는 등의 일을 합니다.
+   ```bash
+   git clone https://github.com/maeumjs/maeum-hono-pet-store.git
+   cd maeum-hono-pet-store
+   ```
 
-### Response JSON serialization function
+2. **Install dependencies**
 
-DTF, DPF를 거친 데이터를 Reponse JSON 형식으로 변환합니다.
+   ```bash
+   pnpm install
+   ```
 
-### Response JSONSchema validation
+3. **Set up environment configuration**
 
-fastify.js에 JSONSchema를 등록하면 자동으로 처리됩니다. 정적 데이터 검증을 처리합니다.
+   ```bash
+   # The project uses a structured configuration approach:
+   # - resources/configs/config.[environment].env - for sensitive data (passwords, keys)
+   # - resources/configs/config.[environment].json - for general settings (git-tracked)
 
-이러한 과정은 pipe operator으로 결합된다는 가정으로 개발합니다.
+   # Copy and customize configuration for your environment
+   cp resources/configs/config.local.env resources/configs/config.your-env.env
+   cp resources/configs/config.local.json resources/configs/config.your-env.json
+   ```
 
-```ts
-const healthHandler = dataTransferer |> dataProcessor |> serializer;
+4. **Run database migrations**
+
+   ```bash
+   pnpm dk generate
+   pnpm dk migrate
+   ```
+
+5. **Start development server**
+
+   ```bash
+   # Set RUN_MODE to your environment (local/develop/production)
+   RUN_MODE=local pnpm dev
+   ```
+
+The API will be available at `http://localhost:3000`
+
+### Configuration Structure
+
+The application uses a dual configuration system for better security and maintainability:
+
+#### Environment Variables (.env files)
+
+Used for sensitive data that shouldn't be committed to git:
+
+```bash
+# resources/configs/config.[environment].env
+
+# Database Configuration - Master (Read/Write)
+DB_PET_STORE_MASTER_HOST=localhost
+DB_PET_STORE_MASTER_PORT=3306
+DB_PET_STORE_MASTER_DB=petstore
+DB_PET_STORE_MASTER_USERNAME=root
+DB_PET_STORE_MASTER_PASSWORD=your-password
+
+# Database Configuration - Slave (Read-Only Replica)
+DB_PET_STORE_SLAVE_HOST=localhost
+DB_PET_STORE_SLAVE_PORT=3307
+DB_PET_STORE_SLAVE_DB=petstore
+DB_PET_STORE_SLAVE_USERNAME=root
+DB_PET_STORE_SLAVE_PASSWORD=your-password
+
+# Database Performance
+DB_PET_STORE_SLOW_QUERY_THRESHOLD=2000
+
+# Encryption & Security
+ENV_ENCRYPTION_KEY=your-32-char-encryption-key
+DEBUG_CHANNEL=maeum
+
+# Feature Flags
+ENV_PAYLOAD_LOGGING=true
+ENV_PAYLOAD_LOG_COMPRESS=true
 ```
 
-## Route
+#### JSON Configuration Files
 
-handler 디렉터리 파일구조를 그대로 라우팅 합니다. 라우팅을 위한 다양한 방법이 있지만 가장 직관적이며 대부분의 개발자가 쉽게 이해할 수 있습니다. fast-maker를 사용하여 디렉터리, 파일구조를 그대로 라우팅 설정으로 변경합니다. fast-maker는 ts-morph 패키지를 사용하여 handler 디렉터리 구조에 포함된 파일을 읽고 분석하여 RouteShorthandOptions 옵션을설정하고 FastifyRequest 객체의 type arguments 까지 이동시켜줍니다.
+Used for general application settings (git-tracked):
 
-## Swagger
+```json
+// resources/configs/config.[environment].json
+{
+  "endpoint": {
+    "pokeapi": "https://pokeapi.co"
+  },
+  "server": {
+    "runMode": "local",        // Runtime environment: local/develop/production
+    "envMode": "production",   // NODE_ENV is always production for optimal performance
+    "caller": "maeum",
+    "port": 7878,
+    "log": {
+      "level": "debug"
+    }
+  }
+}
+```
 
-Maeum은 simple-tjscli를 사용하여 DTO 인터페이스를 json-schema로 자동으로 변경합니다. 이렇게 변경된 DTO 인터페이스는 @fastify/swagger 에 전달되며 json-schema를 사용하여 swagger 문서를 자동생성합니다. DTO 인터페이스만 작성하면 문서화, 검증이 자동으로 이뤄지므로 개발자는 문서 작성에 대한 부담없이 빠르게 원하는 로직을 개발하고 추가할 수 있습니다.
+#### Runtime Environment Control
 
-## validation
+- **NODE_ENV**: Always set to `production` for optimal Node.js and library performance
+- **RUN_MODE**: Controls application behavior (`local`, `develop`, `production`)
+- Configuration files are loaded based on `RUN_MODE` value
 
-Maeum은 ts-json-schema-generator를 사용하여 DTO 인터페이스를 json-schema로 자동으로 변경합니다. 이 과정에서 jsDoc extended 옵션을 사용하며, document comment에 추가한 json-schema 설정 값을 json-schema로 자동으로 변환합니다.
+### Why Separate NODE_ENV and RUN_MODE?
 
-## test
+This architecture separates **runtime optimization** from **application behavior** for several important reasons:
 
-jest를 사용하여 testcase를 작성합니다. fastify에서 제공하는 inject 함수 및 e2e 테스트를 사용하여 간편하게 테스트를 작성할 수 있습니다.
+#### NODE_ENV = production (Fixed)
+
+- **Library Optimization**: Most Node.js libraries (React, Express, etc.) optimize performance when `NODE_ENV=production`
+- **Dependency Loading**: Eliminates dev dependencies and debugging overhead in all environments
+- **Caching & Minification**: Enables production-level optimizations even during development
+- **Runtime Consistency**: Prevents development-specific behaviors from causing production bugs
+- **Variable Initialization**: Avoids Node.js development mode's automatic variable initialization that can hide bugs
+
+#### RUN_MODE = {local|develop|production} (Variable)
+
+- **Configuration Management**: Loads appropriate config files based on deployment environment
+- **Feature Flags**: Controls application-specific behavior (logging, debugging, external services)
+- **Environment Isolation**: Separate database connections, API endpoints per environment
+- **Business Logic**: Application behavior independent of Node.js runtime optimization
+- **Extended Environments**: Supports custom environments (qa, stage, uat) beyond Node.js standard environments
+
+#### Benefits of This Approach
+
+```bash
+# ✅ Best of both worlds
+NODE_ENV=production RUN_MODE=local pnpm dev     # Fast runtime + local config
+NODE_ENV=production RUN_MODE=develop pnpm start # Fast runtime + develop config
+NODE_ENV=production RUN_MODE=qa pnpm start      # Fast runtime + QA config
+NODE_ENV=production RUN_MODE=stage pnpm start   # Fast runtime + staging config
+NODE_ENV=production RUN_MODE=production pnpm start # Fast runtime + production config
+
+# ❌ Traditional approach problems
+NODE_ENV=development # Slower runtime, dev dependencies loaded, runtime inconsistencies
+NODE_ENV=production  # Can't distinguish between staging/local/production environments
+NODE_ENV=staging     # Not a standard Node.js environment, unpredictable behavior
+```
+
+#### Real-World Problems Solved
+
+**🐛 Development Mode Runtime Inconsistencies:**
+
+```javascript
+// NODE_ENV=development behavior
+let config = {}; // Node.js might auto-initialize properties
+config.apiKey = undefined; // Still "works" but fails silently
+
+// NODE_ENV=production behavior
+let config = {};
+config.apiKey = undefined; // Throws error immediately, catches bugs early
+```
+
+**🏗️ Environment Proliferation Issues:**
+
+```bash
+# Traditional approach confusion
+NODE_ENV=development  # Local dev
+NODE_ENV=staging      # Not standard, behavior unclear
+NODE_ENV=qa           # Not standard, libraries confused
+NODE_ENV=production   # Production
+
+# Our approach clarity
+NODE_ENV=production   # Always optimized runtime
+RUN_MODE=local        # Clear configuration context
+RUN_MODE=qa           # Clear configuration context
+RUN_MODE=stage        # Clear configuration context
+RUN_MODE=production   # Clear configuration context
+```
+
+This pattern ensures **optimal performance**, **runtime consistency**, and **flexible environment management** while avoiding the pitfalls of non-standard NODE_ENV values.
+
+### Database Architecture: Master-Slave Configuration
+
+The boilerplate demonstrates **production-ready database scaling** with Master-Slave (Read Replica) architecture:
+
+#### Why Use Read Replicas?
+
+**Performance Benefits:**
+
+- **Read Scaling**: Distribute read queries across multiple database instances
+- **Load Distribution**: Reduce load on master database for write-intensive operations
+- **Geographic Distribution**: Place replicas closer to users for lower latency
+- **Analytical Workloads**: Run heavy reporting queries on replicas without affecting production
+
+**Reliability & Availability:**
+
+- **High Availability**: Continue serving reads even if master is temporarily unavailable
+- **Backup Strategy**: Use replicas for backup operations without affecting master performance
+- **Disaster Recovery**: Quick failover capability in case of master database failure
+
+#### Implementation Pattern
+
+**Loader-based Dependency Injection:**
+
+```typescript
+// src/modules/initialize/init.db.ts
+export async function initDb(): Promise<{
+  writer: MySql2Database<typeof schema>;
+  reader: MySql2Database<typeof schema>;
+}> {
+  const writerPoolConnection = mysql.createPool({
+    host: process.env.DB_PET_STORE_MASTER_HOST,
+    port: process.env.DB_PET_STORE_MASTER_PORT,
+    // ... master config
+  });
+
+  const readerPoolConnection = mysql.createPool({
+    host: process.env.DB_PET_STORE_SLAVE_HOST,
+    port: process.env.DB_PET_STORE_SLAVE_PORT,
+    // ... slave config
+  });
+
+  return {
+    writer: drizzle(writerPoolConnection, { schema }),
+    reader: drizzle(readerPoolConnection, { schema })
+  };
+}
+```
+
+**Repository Layer with Smart Routing:**
+
+```typescript
+// src/repository/database/pet.repository.ts
+import { container } from '#/loader';
+
+// Read operations - parameterized database selection
+export async function readPetById(
+  id: bigint,
+  use: keyof typeof container.db = 'reader'  // Default to read replica
+): Promise<Pet> {
+  const db = use === 'writer' ? container.db.writer : container.db.reader;
+
+  return await db.query.pets.findFirst({
+    where: eq(pets.id, id),
+    with: { tags: true, category: true }
+  });
+}
+
+// Write operations - always use master
+export async function createPet(pet: CreatePet): Promise<Pet> {
+  return await container.db.writer.transaction(async (tx) => {
+    const result = await tx.insert(pets).values(pet).$returningId();
+    return await readPetById(result.id, 'writer'); // Consistent read after write
+  });
+}
+
+// Flexible read routing for complex scenarios
+export async function updatePet(id: bigint, pet: UpdatePet): Promise<Pet> {
+  // Check existence on writer for consistency
+  const existingPet = await readPetById(id, 'writer');
+  if (!existingPet) throw new NotFoundError('Pet not found');
+
+  await container.db.writer.transaction(async (tx) => {
+    await tx.update(pets).set(pet).where(eq(pets.id, id));
+  });
+
+  return await readPetById(id, 'writer'); // Return fresh data from master
+}
+```
+
+#### Configuration Benefits
+
+**Development Environment:**
+
+```bash
+# Single database for simplicity
+DB_PET_STORE_MASTER_HOST=localhost:3306
+DB_PET_STORE_SLAVE_HOST=localhost:3306  # Same as master
+```
+
+**Production Environment:**
+
+```bash
+# Separate read replica for performance
+DB_PET_STORE_MASTER_HOST=master.db.company.com:3306
+DB_PET_STORE_SLAVE_HOST=replica.db.company.com:3306
+```
+
+This architecture provides a **scalable foundation** that grows with your application's needs.
+
+## 📚 Architecture & Design Principles
+
+The boilerplate implements several advanced design principles documented in detail:
+
+- **[SCHEMA_FIRST.md](docs/SCHEMA_FIRST.md)** - Schema-first development: Prioritizing runtime validation over compile-time types for robust data integrity
+- **[REQUEST_ID.md](docs/REQUEST_ID.md)** - End-to-end request tracing: Implementing correlation IDs for complete observability across client, proxy, and database layers
+- **[LOADER.md](docs/LOADER.md)** - Type-safe initialization: Leveraging `--import` and top-level await for deterministic async bootstrapping in Node.js applications
+
+These documents provide in-depth technical rationale and implementation strategies for enterprise-grade application architecture.
+
+## 📜 Available Scripts
+
+### Development
+
+```bash
+RUN_MODE=local pnpm dev      # Start development server with hot reload (local config)
+RUN_MODE=develop pnpm dev    # Start with develop environment configuration
+RUN_MODE=local pnpm debug    # Start with debugging enabled
+```
+
+### Building
+
+```bash
+pnpm build        # Build TypeScript to JavaScript
+pnpm bundle       # Create optimized bundle with esbuild
+```
+
+### Database
+
+```bash
+pnpm dk           # Drizzle kit CLI
+pnpm dk generate  # Generate migrations
+pnpm dk migrate   # Run migrations
+pnpm seed         # Seed database with sample data
+```
+
+### Testing
+
+```bash
+pnpm test         # Run all tests with coverage
+```
+
+### Code Quality
+
+```bash
+pnpm lint         # Run ESLint
+pnpm prettier     # Format code with Prettier
+pnpm lnb          # Run build and lint together
+```
+
+### Production
+
+```bash
+RUN_MODE=production pnpm start        # Start with PM2 (production config)
+RUN_MODE=production pnpm start:withoutpm2  # Start without PM2
+```
+
+## 🔍 API Documentation
+
+Once the server is running, you can access:
+
+- **OpenAPI Documentation**: `http://localhost:3000/doc`
+- **Health Check**: `http://localhost:3000/health`
+- **Root Endpoint**: `http://localhost:3000/`
+
+### Sample API Endpoints
+
+```http
+# Categories
+GET    /category/:id     # Get category by ID
+POST   /category         # Create new category
+PUT    /category/:id     # Update category
+DELETE /category/:id     # Delete category
+
+# Pets
+GET    /pet/:id         # Get pet by ID
+POST   /pet             # Create new pet
+PUT    /pet/:id         # Update pet
+DELETE /pet/:id         # Delete pet
+POST   /pet/:id/uploadImage  # Upload pet image
+
+# Tags
+GET    /tag/:id         # Get tag by ID
+POST   /tag             # Create new tag
+PUT    /tag/:id         # Update tag
+DELETE /tag/:id         # Delete tag
+```
+
+## 🧪 Testing
+
+The project includes comprehensive test coverage using Vitest and Test Containers:
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests with UI
+pnpm test:ui
+
+# Run specific test file
+pnpm test src/repository/database/pet.repository.test.ts
+```
+
+Tests use MySQL test containers for isolated database testing, ensuring consistent test environments.
+
+## 🐳 Docker Support
+
+### Development
+
+```bash
+docker build -t maeum-pet-store .
+docker run -p 3000:3000 maeum-pet-store
+```
+
+### Production
+
+The Dockerfile uses multi-stage builds with PNPM for optimized production images.
+
+## 🏗️ Architecture Patterns
+
+### Configuration Management
+
+**Dual Configuration System** for optimal security and maintainability:
+
+- **Environment Files** (`.env`): Sensitive data (passwords, API keys, secrets)
+- **JSON Config** (`.json`): General settings, feature flags, endpoints
+- **Runtime Control**: `NODE_ENV=production` + `RUN_MODE={local|develop|production}`
+- **Environment Isolation**: Separate configs per environment with clear separation of concerns
+
+### Error Handling
+
+Custom error hierarchy with proper HTTP status codes:
+
+- `HttpError` - Base error class
+- `BadRequestError` - 400 errors
+- `UnauthorizedError` - 401 errors
+- `ForbiddenError` - 403 errors
+- `NotFoundError` - 404 errors
+- `ConfigurationError` - 500 errors
+
+### Type Safety
+
+- Zod schemas for runtime validation
+- Drizzle ORM for type-safe database queries
+- OpenAPI integration with automatic type generation
+- Comprehensive TypeScript configuration
+
+### Repository Pattern
+
+Clean separation between data access and business logic:
+
+- Database repositories handle data persistence
+- Schema validation at the repository level
+- Test coverage for all repository methods
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Hono.js](https://hono.dev/) for the amazing web framework
+- [Drizzle ORM](https://orm.drizzle.team/) for type-safe database operations
+- [Zod](https://zod.dev/) for schema validation
+- All the amazing open-source projects that make this possible
+
+---
+
+Built with ❤️ by [ByungJoon Lee](https://github.com/imjuni)
