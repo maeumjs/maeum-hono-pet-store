@@ -4,13 +4,12 @@ import { eq } from "drizzle-orm";
 import { atOrThrow, orThrow } from "my-easy-fp";
 import pathe from "pathe";
 import type { z } from "zod";
-import { container } from "#/loader";
-import { NotFoundError } from "#/modules/error/not.found.error";
-import { uuidV7Binary } from "#/modules/uuid/uuid.buffer";
-import { photoUrls } from "#/schema/database/schema.drizzle";
-
-import type { PhotoUrlSelectSchema } from "#/schema/database/schema.zod";
-import type { FileUploadSchema } from "#/schema/repository/repository.zod";
+import { container } from "#app/loader.js";
+import { NotFoundError } from "#modules/error/not.found.error.js";
+import { uuidV7Binary } from "#modules/uuid/uuid.buffer.js";
+import { photoUrls } from "#schema/database/schema.drizzle.js";
+import type { PhotoUrlSelectSchema } from "#schema/database/schema.zod.js";
+import type { FileUploadSchema } from "#schema/repository/repository.zod.js";
 
 async function readNullablePhotoUrlById(
   id: bigint,
@@ -58,4 +57,8 @@ export async function createPhotoUrl(
   return insertedPhotoUrl;
 }
 
-export const photoUrlRepository = { readNullablePhotoUrlById, readPhotoUrlById, createPhotoUrl };
+export const photoUrlRepository = {
+  readNullablePhotoUrlById,
+  readPhotoUrlById,
+  createPhotoUrl,
+};

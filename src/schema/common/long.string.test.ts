@@ -6,7 +6,7 @@ import {
   SignedLongStringSchema,
   UnsignedLongBigIntSchema,
   UnsignedLongStringSchema,
-} from "#/schema/common/long.string.zod";
+} from "#schema/common/long.string.zod.js";
 
 describe("Signed, Unsigned Long schema", () => {
   describe("LongStringSchema", () => {

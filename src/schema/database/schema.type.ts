@@ -1,4 +1,4 @@
-import type { container } from "#/loader";
+import type { container } from "#app/loader.js";
 
 // 1. 스키마를 포함한 완벽한 트랜잭션 타입 정의
 // export type TDBTransaction<T = unknown> = SQLiteTransaction<

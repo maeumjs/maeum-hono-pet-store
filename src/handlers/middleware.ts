@@ -1,11 +1,11 @@
 import { serveStatic } from "@hono/node-server/serve-static";
 import { requestId } from "hono/request-id";
 
-import { container } from "#/loader";
-import { defaultHook } from "#/modules/hook/default.hook";
-import { onError } from "#/modules/hook/on.error";
-import { asyncContextMiddleware } from "#/modules/middleware/async.context.middleware";
-import { httpLoggingMiddleware } from "#/modules/middleware/http.logging.middleware";
+import { container } from "#app/loader.js";
+import { defaultHook } from "#modules/hook/default.hook.js";
+import { onError } from "#modules/hook/on.error.js";
+import { asyncContextMiddleware } from "#modules/middleware/async.context.middleware.js";
+import { httpLoggingMiddleware } from "#modules/middleware/http.logging.middleware.js";
 
 export function middleware(): void {
   // configuration default hook

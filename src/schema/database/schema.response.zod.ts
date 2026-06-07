@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-import { BigIntToStringSchema } from "#/schema/common/long.string.zod";
+import { BigIntToStringSchema } from "#schema/common/long.string.zod.js";
 import {
   CategorySelectSchema,
   PhotoUrlSelectSchema,
   TagSelectSchema,
-} from "#/schema/database/schema.zod";
+} from "#schema/database/schema.zod.js";
 
 // ------------------------------------------------------------------------------------------
 // Response schemas: bigint id fields are serialized as string for JSON compatibility

@@ -2,16 +2,17 @@ import type { MySql2Database } from "drizzle-orm/mysql2"; // 타입 변경
 import { drizzle } from "drizzle-orm/mysql2"; // mysql2용 drizzle
 import { orThrow } from "my-easy-fp";
 import mysql from "mysql2/promise"; // mysql2 드라이버
-import { applyRequestIdCommentMiddleware } from "#/modules/database/request.id.comment.middleware";
-import { ConfigurationError } from "#/modules/error/configuration.error";
-import type { initLog } from "#/modules/initialize/init.log";
-import { loggerRepository } from "#/repository/logger/logger.respository";
+import { applyRequestIdCommentMiddleware } from "#modules/database/request.id.comment.middleware.js";
+import { ConfigurationError } from "#modules/error/configuration.error.js";
+import type { initLog } from "#modules/initialize/init.log.js";
+import { loggerRepository } from "#repository/logger/logger.respository.js";
 // eslint-disable-next-line import-x/no-namespace
-import * as schema from "#/schema/database/schema.drizzle";
+import * as schema from "#schema/database/schema.drizzle.js";
 
-export async function initDb(
-  logger: Awaited<ReturnType<typeof initLog>>,
-): Promise<{ writer: MySql2Database<typeof schema>; reader: MySql2Database<typeof schema> }> {
+export async function initDb(logger: Awaited<ReturnType<typeof initLog>>): Promise<{
+  writer: MySql2Database<typeof schema>;
+  reader: MySql2Database<typeof schema>;
+}> {
   const host = orThrow(
     process.env.DB_PET_STORE_MASTER_HOST,
     new ConfigurationError("Cannot found host"),

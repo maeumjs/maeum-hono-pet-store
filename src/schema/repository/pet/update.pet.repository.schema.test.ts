@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-
-import { UpdatePetRepositorySchema } from "./update.pet.repository.schema";
+import { UpdatePetRepositorySchema } from "#schema/repository/pet/update.pet.repository.schema.js";
 
 describe("UpdatePetRepositorySchema", () => {
   it("should pass with valid update pet data using category id", () => {

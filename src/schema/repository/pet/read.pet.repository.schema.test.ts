@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-
-import { ReadPetRepositorySchema } from "./read.pet.repository.schema";
+import { ReadPetRepositorySchema } from "#schema/repository/pet/read.pet.repository.schema.js";
 
 describe("ReadPetRepositorySchema", () => {
   it("should pass with complete read pet data", () => {

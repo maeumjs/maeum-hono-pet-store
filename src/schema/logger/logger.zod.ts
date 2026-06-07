@@ -1,6 +1,6 @@
 import z from "zod";
 
-import { ServerConfigurationSchema } from "#/schema/configuration/server.zod";
+import { ServerConfigurationSchema } from "#schema/configuration/server.zod.js";
 
 export const LogType = z.enum(["server-start", "db-connect"]);
 

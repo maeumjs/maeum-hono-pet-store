@@ -3,8 +3,8 @@ import path from "node:path";
 
 import { parse } from "jsonc-parser";
 import type { z } from "zod";
-import { ConfigurationSchema } from "#/schema/configuration/configuration.zod";
-import { ServerConfigurationSchema } from "#/schema/configuration/server.zod";
+import { ConfigurationSchema } from "#schema/configuration/configuration.zod.js";
+import { ServerConfigurationSchema } from "#schema/configuration/server.zod.js";
 
 export async function initConfig(): Promise<z.infer<typeof ConfigurationSchema>> {
   const dirname = path.join(process.cwd(), "resources", "configs");

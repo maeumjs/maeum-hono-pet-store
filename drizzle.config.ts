@@ -1,8 +1,7 @@
 import { defineConfig } from "drizzle-kit";
 import { orThrow } from "my-easy-fp";
-
-import { ConfigurationError } from "./src/modules/error/configuration.error";
-import { initDotEnv } from "./src/modules/initialize/init.dot.env";
+import { ConfigurationError } from "#modules/error/configuration.error.js";
+import { initDotEnv } from "#modules/initialize/init.dot.env.js";
 
 initDotEnv();
 

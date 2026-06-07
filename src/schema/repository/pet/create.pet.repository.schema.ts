@@ -5,7 +5,7 @@ import {
   PetInsertSchema,
   PhotoUrlSelectSchema,
   TagSelectSchema,
-} from "#/schema/database/schema.zod";
+} from "#schema/database/schema.zod.js";
 
 export const CreatePetRepositorySchema = PetInsertSchema.omit({
   categoryId: true,

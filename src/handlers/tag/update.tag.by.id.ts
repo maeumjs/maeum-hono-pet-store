@@ -1,9 +1,9 @@
 import type { RouteHandler } from "@hono/zod-openapi";
 import { createRoute } from "@hono/zod-openapi";
-import { tagRepository } from "#/repository/database/tag.repository";
-import { RestErrorSchema } from "#/schema/common/rest.error.zod";
-import { TagResponseSchema } from "#/schema/database/schema.response.zod";
-import { TagUpdateSchema } from "#/schema/database/schema.zod";
+import { tagRepository } from "#repository/database/tag.repository.js";
+import { RestErrorSchema } from "#schema/common/rest.error.zod.js";
+import { TagResponseSchema } from "#schema/database/schema.response.zod.js";
+import { TagUpdateSchema } from "#schema/database/schema.zod.js";
 
 export const updateTagByIdRoute = createRoute({
   method: "put",

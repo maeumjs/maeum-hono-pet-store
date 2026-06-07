@@ -1,4 +1,4 @@
-import { HttpError } from "#/modules/error/http.error";
+import { HttpError } from "#modules/error/http.error.js";
 
 export class ConfigurationError extends HttpError {
   constructor(message: string) {

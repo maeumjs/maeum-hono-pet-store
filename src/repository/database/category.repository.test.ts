@@ -4,7 +4,7 @@ import type { MySql2Database } from "drizzle-orm/mysql2";
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { afterAll, assert, beforeAll, describe, expect, it, vi } from "vitest";
-import * as schema from "#/schema/database/schema.drizzle";
+import * as schema from "#schema/database/schema.drizzle.js";
 
 // ---------------------------------------------------------------------------
 // Mock #/loader before importing categoryRepository so that repository
@@ -20,7 +20,7 @@ vi.mock("#/loader", () => ({
 }));
 
 // Import after mock is registered
-const { categoryRepository } = await import("#/repository/database/category.repository");
+const { categoryRepository } = await import("#repository/database/category.repository.js");
 
 // ---------------------------------------------------------------------------
 // DDL — mirrors schema.drizzle.ts for the categories table
@@ -136,7 +136,9 @@ describe("categoryRepository", () => {
 
   // -------------------------------------------------------------------------
   it("modifies a category name", async () => {
-    const created = await categoryRepository.createCategory({ name: "Reptiles" });
+    const created = await categoryRepository.createCategory({
+      name: "Reptiles",
+    });
     const modified = await categoryRepository.modifyCategoryById(created.id, {
       name: "Exotic Reptiles",
     });

@@ -1,9 +1,9 @@
 import type { RouteHandler } from "@hono/zod-openapi";
 import { createRoute } from "@hono/zod-openapi";
-import { photoUrlRepository } from "#/repository/database/photo.url.repository";
-import { RestErrorSchema } from "#/schema/common/rest.error.zod";
-import { PhotoUrlSelectSchema } from "#/schema/database/schema.zod";
-import { FileUploadSchema } from "#/schema/repository/repository.zod";
+import { photoUrlRepository } from "#repository/database/photo.url.repository.js";
+import { RestErrorSchema } from "#schema/common/rest.error.zod.js";
+import { PhotoUrlSelectSchema } from "#schema/database/schema.zod.js";
+import { FileUploadSchema } from "#schema/repository/repository.zod.js";
 
 export const uploadImageRoute = createRoute({
   method: "post",

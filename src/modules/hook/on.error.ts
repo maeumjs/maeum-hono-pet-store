@@ -1,5 +1,5 @@
 import type { ErrorHandler } from "hono";
-import { HttpError } from "#/modules/error/http.error";
+import { HttpError } from "#modules/error/http.error.js";
 
 export const onError: ErrorHandler = (err, c) => {
   if (err instanceof HttpError) {

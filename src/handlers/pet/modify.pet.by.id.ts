@@ -1,11 +1,11 @@
 import type { RouteHandler } from "@hono/zod-openapi";
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
-import { petRepository } from "#/repository/database/pet.repository";
-import { SignedLongStringSchema } from "#/schema/common/long.string.zod";
-import { RestErrorSchema } from "#/schema/common/rest.error.zod";
-import { PetResponseSchema } from "#/schema/database/schema.response.zod";
-import { ModifyPetRepositorySchema } from "#/schema/repository/pet/modify.pet.repository.schema";
+import { petRepository } from "#repository/database/pet.repository.js";
+import { SignedLongStringSchema } from "#schema/common/long.string.zod.js";
+import { RestErrorSchema } from "#schema/common/rest.error.zod.js";
+import { PetResponseSchema } from "#schema/database/schema.response.zod.js";
+import { ModifyPetRepositorySchema } from "#schema/repository/pet/modify.pet.repository.schema.js";
 
 export const modifyPetRoute = createRoute({
   method: "patch",

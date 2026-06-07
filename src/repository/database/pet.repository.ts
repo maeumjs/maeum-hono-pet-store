@@ -2,17 +2,16 @@ import { and, eq, inArray } from "drizzle-orm";
 import { orThrow } from "my-easy-fp";
 import { omit, shake } from "radash";
 import type { z } from "zod";
-import { container } from "#/loader";
-import { NotFoundError } from "#/modules/error/not.found.error";
-import { uuidV7Binary } from "#/modules/uuid/uuid.buffer";
-import { categoryRepository } from "#/repository/database/category.repository";
-import { categories, pets, petsToTags, photoUrls, tags } from "#/schema/database/schema.drizzle";
-
-import type { TDataSource } from "#/schema/database/schema.type";
-import type { CreatePetRepositorySchema } from "#/schema/repository/pet/create.pet.repository.schema";
-import type { ModifyPetRepositorySchema } from "#/schema/repository/pet/modify.pet.repository.schema";
-import type { ReadPetRepositorySchema } from "#/schema/repository/pet/read.pet.repository.schema";
-import type { UpdatePetRepositorySchema } from "#/schema/repository/pet/update.pet.repository.schema";
+import { container } from "#app/loader.js";
+import { NotFoundError } from "#modules/error/not.found.error.js";
+import { uuidV7Binary } from "#modules/uuid/uuid.buffer.js";
+import { categoryRepository } from "#repository/database/category.repository.js";
+import { categories, pets, petsToTags, photoUrls, tags } from "#schema/database/schema.drizzle.js";
+import type { TDataSource } from "#schema/database/schema.type.js";
+import type { CreatePetRepositorySchema } from "#schema/repository/pet/create.pet.repository.schema.js";
+import type { ModifyPetRepositorySchema } from "#schema/repository/pet/modify.pet.repository.schema.js";
+import type { ReadPetRepositorySchema } from "#schema/repository/pet/read.pet.repository.schema.js";
+import type { UpdatePetRepositorySchema } from "#schema/repository/pet/update.pet.repository.schema.js";
 
 export async function handleTags(
   db: TDataSource,
@@ -187,11 +186,13 @@ async function createPet(
       const insertedPetId = orThrow(nullableInsertedPetId);
 
       if (pet.photoUrls.length > 0) {
-        await tx
-          .insert(photoUrls)
-          .values(
-            pet.photoUrls.map((url) => ({ url, uuid: uuidV7Binary(), petId: insertedPetId.id })),
-          );
+        await tx.insert(photoUrls).values(
+          pet.photoUrls.map((url) => ({
+            url,
+            uuid: uuidV7Binary(),
+            petId: insertedPetId.id,
+          })),
+        );
       }
 
       if (insertedTags.all.length > 0) {
@@ -216,7 +217,9 @@ async function updatePet(
   id: bigint,
   pet: z.infer<typeof UpdatePetRepositorySchema>,
 ): Promise<z.infer<typeof ReadPetRepositorySchema>> {
-  const selectedPet = await container.db.writer.query.pets.findFirst({ where: eq(pets.id, id) });
+  const selectedPet = await container.db.writer.query.pets.findFirst({
+    where: eq(pets.id, id),
+  });
 
   if (selectedPet == null) {
     throw new Error(`존재하지 않는 pet(${id}) 입니다`);
@@ -249,7 +252,9 @@ async function modifyPet(
   id: bigint,
   pet: z.infer<typeof ModifyPetRepositorySchema>,
 ): Promise<z.infer<typeof ReadPetRepositorySchema>> {
-  const selectedPet = await container.db.writer.query.pets.findFirst({ where: eq(pets.id, id) });
+  const selectedPet = await container.db.writer.query.pets.findFirst({
+    where: eq(pets.id, id),
+  });
 
   if (selectedPet == null) {
     throw new NotFoundError(`존재하지 않는 pet(${id}) 입니다`);

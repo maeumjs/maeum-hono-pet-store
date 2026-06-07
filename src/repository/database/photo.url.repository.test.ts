@@ -5,7 +5,7 @@ import type { MySql2Database } from "drizzle-orm/mysql2";
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { afterAll, assert, beforeAll, describe, expect, it, vi } from "vitest";
-import * as schema from "#/schema/database/schema.drizzle";
+import * as schema from "#schema/database/schema.drizzle.js";
 
 // ---------------------------------------------------------------------------
 // Mock #/loader before importing repositories
@@ -26,8 +26,8 @@ vi.mock("#/loader", () => ({
 vi.spyOn(fs.promises, "mkdir").mockResolvedValue(undefined);
 vi.spyOn(fs.promises, "writeFile").mockResolvedValue(undefined);
 
-const { photoUrlRepository } = await import("#/repository/database/photo.url.repository");
-const { petRepository } = await import("#/repository/database/pet.repository");
+const { photoUrlRepository } = await import("#repository/database/photo.url.repository.js");
+const { petRepository } = await import("#repository/database/pet.repository.js");
 
 // ---------------------------------------------------------------------------
 // DDL — all tables required by petRepository (used to seed photo_url rows)

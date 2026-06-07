@@ -2,7 +2,7 @@ import path from "node:path";
 
 import { config } from "dotenv";
 
-import { ServerConfigurationSchema } from "#/schema/configuration/server.zod";
+import { ServerConfigurationSchema } from "#schema/configuration/server.zod.js";
 
 export function initDotEnv(): void {
   const runMode = ServerConfigurationSchema.shape.runMode.parse(process.env.RUN_MODE);

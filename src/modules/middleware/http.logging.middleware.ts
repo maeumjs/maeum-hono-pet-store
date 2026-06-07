@@ -1,5 +1,5 @@
 import type { MiddlewareHandler } from "hono";
-import { container } from "#/loader";
+import { container } from "#app/loader.js";
 
 export function httpLoggingMiddleware(): MiddlewareHandler {
   return async (c, next) => {

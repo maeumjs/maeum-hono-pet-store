@@ -39,5 +39,6 @@
     "source.organizeImports.biome": "explicit"
   },
   "formattingToggle.affects": ["editor.formatOnSave"],
-  "files.insertFinalNewline": true
+  "files.insertFinalNewline": true,
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
 }

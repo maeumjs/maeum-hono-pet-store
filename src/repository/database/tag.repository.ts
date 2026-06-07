@@ -1,17 +1,16 @@
 import { eq, inArray } from "drizzle-orm";
 import { atOrThrow, orThrow } from "my-easy-fp";
 import type z from "zod";
-import { container } from "#/loader";
-import { NotFoundError } from "#/modules/error/not.found.error";
-import { uuidV7Binary } from "#/modules/uuid/uuid.buffer";
-import { tags } from "#/schema/database/schema.drizzle";
-
+import { container } from "#app/loader.js";
+import { NotFoundError } from "#modules/error/not.found.error.js";
+import { uuidV7Binary } from "#modules/uuid/uuid.buffer.js";
+import { tags } from "#schema/database/schema.drizzle.js";
 import type {
   TagInsertSchema,
   TagModifySchema,
   TagSelectSchema,
   TagUpdateSchema,
-} from "#/schema/database/schema.zod";
+} from "#schema/database/schema.zod.js";
 
 async function readNullableTagById(
   id: bigint,

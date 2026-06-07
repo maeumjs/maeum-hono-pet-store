@@ -1,10 +1,9 @@
 import { serve } from "@hono/node-server";
 import { isError } from "my-easy-fp";
-
-import { middleware } from "#/handlers/middleware";
-import { routing } from "#/handlers/route";
-import { container } from "#/loader";
-import { loggerRepository } from "#/repository/logger/logger.respository";
+import { container } from "#app/loader.js";
+import { middleware } from "#handlers/middleware.js";
+import { routing } from "#handlers/route.js";
+import { loggerRepository } from "#repository/logger/logger.respository.js";
 
 async function app() {
   middleware();

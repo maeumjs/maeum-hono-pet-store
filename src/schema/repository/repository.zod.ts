@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-import { SignedLongStringSchema } from "#/schema/common/long.string.zod";
+import { SignedLongStringSchema } from "#schema/common/long.string.zod.js";
 
 // 파일 업로드를 위한 스키마
 export const FileUploadSchema = z.object({

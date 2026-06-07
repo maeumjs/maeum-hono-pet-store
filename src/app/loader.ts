@@ -1,11 +1,11 @@
 import { isError } from "my-easy-fp";
 
-import { initApp } from "#/modules/initialize/init.app";
-import { initConfig } from "#/modules/initialize/init.config";
-import { initDb } from "#/modules/initialize/init.db";
-import { initDotEnv } from "#/modules/initialize/init.dot.env";
-import { initLog } from "#/modules/initialize/init.log";
-import { initPackageJson } from "#/modules/initialize/init.package.json";
+import { initApp } from "#modules/initialize/init.app.js";
+import { initConfig } from "#modules/initialize/init.config.js";
+import { initDb } from "#modules/initialize/init.db.js";
+import { initDotEnv } from "#modules/initialize/init.dot.env.js";
+import { initLog } from "#modules/initialize/init.log.js";
+import { initPackageJson } from "#modules/initialize/init.package.json.js";
 
 async function initialize(): Promise<{
   config: Awaited<ReturnType<typeof initConfig>>;

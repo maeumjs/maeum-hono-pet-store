@@ -1,6 +1,5 @@
 import { assert, describe, expect, it } from "vitest";
-
-import { ModifyPetRepositorySchema } from "./modify.pet.repository.schema";
+import { ModifyPetRepositorySchema } from "#schema/repository/pet/modify.pet.repository.schema.js";
 
 describe("ModifyPetRepositorySchema", () => {
   it("should pass with partial update data - name only", () => {

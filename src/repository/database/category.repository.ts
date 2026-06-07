@@ -1,18 +1,17 @@
 import { eq } from "drizzle-orm";
 import { atOrThrow, orThrow } from "my-easy-fp";
 import type z from "zod";
-import { container } from "#/loader";
-import { NotFoundError } from "#/modules/error/not.found.error";
-import { uuidV7Binary } from "#/modules/uuid/uuid.buffer";
-import { categories } from "#/schema/database/schema.drizzle";
-
-import type { TDataSource } from "#/schema/database/schema.type";
+import { container } from "#app/loader.js";
+import { NotFoundError } from "#modules/error/not.found.error.js";
+import { uuidV7Binary } from "#modules/uuid/uuid.buffer.js";
+import { categories } from "#schema/database/schema.drizzle.js";
+import type { TDataSource } from "#schema/database/schema.type.js";
 import type {
   CategoryInsertSchema,
   CategoryModifySchema,
   CategorySelectSchema,
   CategoryUpdateSchema,
-} from "#/schema/database/schema.zod";
+} from "#schema/database/schema.zod.js";
 
 async function readNullableCategoryById(
   id: bigint,

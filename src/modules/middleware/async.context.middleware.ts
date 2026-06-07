@@ -1,5 +1,5 @@
 import type { MiddlewareHandler } from "hono";
-import { asyncContext } from "#/modules/context/async.context";
+import { asyncContext } from "#modules/context/async.context.js";
 
 export function asyncContextMiddleware(): MiddlewareHandler {
   return async (c, next) => {

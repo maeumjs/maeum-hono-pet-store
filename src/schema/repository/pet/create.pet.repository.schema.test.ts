@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-
-import { CreatePetRepositorySchema } from "./create.pet.repository.schema";
+import { CreatePetRepositorySchema } from "#schema/repository/pet/create.pet.repository.schema.js";
 
 describe("CreatePetRepositorySchema", () => {
   it("should pass with valid create pet data using category name", () => {

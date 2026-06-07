@@ -5,9 +5,11 @@ import {
   PetSelectSchema,
   PhotoUrlSelectSchema,
   TagSelectSchema,
-} from "#/schema/database/schema.zod";
+} from "#schema/database/schema.zod.js";
 
-export const ReadPetRepositorySchema = PetSelectSchema.omit({ categoryId: true }).extend({
+export const ReadPetRepositorySchema = PetSelectSchema.omit({
+  categoryId: true,
+}).extend({
   category: CategorySelectSchema,
   tags: z.array(TagSelectSchema),
   photoUrls: z.array(PhotoUrlSelectSchema.omit({ petId: true })),

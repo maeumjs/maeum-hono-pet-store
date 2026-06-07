@@ -1,9 +1,9 @@
 import type { RouteHandler } from "@hono/zod-openapi";
 import { createRoute } from "@hono/zod-openapi";
-import { categoryRepository } from "#/repository/database/category.repository";
-import { RestErrorSchema } from "#/schema/common/rest.error.zod";
-import { CategoryResponseSchema } from "#/schema/database/schema.response.zod";
-import { CategoryInsertSchema } from "#/schema/database/schema.zod";
+import { categoryRepository } from "#repository/database/category.repository.js";
+import { RestErrorSchema } from "#schema/common/rest.error.zod.js";
+import { CategoryResponseSchema } from "#schema/database/schema.response.zod.js";
+import { CategoryInsertSchema } from "#schema/database/schema.zod.js";
 
 export const createCategoryRoute = createRoute({
   method: "post",

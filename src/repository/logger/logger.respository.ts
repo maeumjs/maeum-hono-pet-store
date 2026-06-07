@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { LogSchema } from "#/schema/logger/logger.zod";
+import { LogSchema } from "#schema/logger/logger.zod.js";
 
 type TLogInput = z.infer<typeof LogSchema>;
 

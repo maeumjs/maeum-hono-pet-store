@@ -4,7 +4,7 @@ import type { MySql2Database } from "drizzle-orm/mysql2";
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import * as schema from "#/schema/database/schema.drizzle";
+import * as schema from "#schema/database/schema.drizzle.js";
 
 // ---------------------------------------------------------------------------
 // Mock #/loader before importing tagRepository
@@ -18,7 +18,7 @@ vi.mock("#/loader", () => ({
   },
 }));
 
-const { tagRepository } = await import("#/repository/database/tag.repository");
+const { tagRepository } = await import("#repository/database/tag.repository.js");
 
 // ---------------------------------------------------------------------------
 // DDL
@@ -106,7 +106,9 @@ describe("tagRepository", () => {
   // -------------------------------------------------------------------------
   it("updates a tag name", async () => {
     const created = await tagRepository.createTag({ name: "wild" });
-    const updated = await tagRepository.updateTagById(created.id, { name: "domesticated" });
+    const updated = await tagRepository.updateTagById(created.id, {
+      name: "domesticated",
+    });
 
     expect(updated.name).toBe("domesticated");
     expect(updated.id).toEqual(created.id);
@@ -140,7 +142,9 @@ describe("tagRepository", () => {
   // -------------------------------------------------------------------------
   it("modifies a tag name", async () => {
     const created = await tagRepository.createTag({ name: "old" });
-    const modified = await tagRepository.modifyTagById(created.id, { name: "new" });
+    const modified = await tagRepository.modifyTagById(created.id, {
+      name: "new",
+    });
 
     expect(modified.name).toBe("new");
   });

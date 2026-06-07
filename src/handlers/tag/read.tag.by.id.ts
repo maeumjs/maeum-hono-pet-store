@@ -1,10 +1,10 @@
 import type { RouteHandler } from "@hono/zod-openapi";
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
-import { tagRepository } from "#/repository/database/tag.repository";
-import { SignedLongStringSchema } from "#/schema/common/long.string.zod";
-import { RestErrorSchema } from "#/schema/common/rest.error.zod";
-import { TagResponseSchema } from "#/schema/database/schema.response.zod";
+import { tagRepository } from "#repository/database/tag.repository.js";
+import { SignedLongStringSchema } from "#schema/common/long.string.zod.js";
+import { RestErrorSchema } from "#schema/common/rest.error.zod.js";
+import { TagResponseSchema } from "#schema/database/schema.response.zod.js";
 
 export const readTagByIdRoute = createRoute({
   method: "get",

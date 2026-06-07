@@ -1,8 +1,8 @@
 import type { RouteConfig, RouteHandler } from "@hono/zod-openapi";
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
-import { container } from "#/loader";
-import { ServerConfigurationSchema } from "#/schema/configuration/server.zod";
+import { container } from "#app/loader.js";
+import { ServerConfigurationSchema } from "#schema/configuration/server.zod.js";
 
 const path = "/health";
 

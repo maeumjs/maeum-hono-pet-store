@@ -4,9 +4,8 @@ import dayjs from "dayjs";
 import pathe from "pathe";
 import pino from "pino";
 import type { z } from "zod";
-import { createConsoleTransport } from "#/modules/logging/create.console.transport";
-
-import type { ConfigurationSchema } from "#/schema/configuration/configuration.zod";
+import { createConsoleTransport } from "#modules/logging/create.console.transport.js";
+import type { ConfigurationSchema } from "#schema/configuration/configuration.zod.js";
 
 export type TLogTransport = pino.StreamEntry;
 

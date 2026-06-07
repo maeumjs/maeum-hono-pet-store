@@ -1,6 +1,6 @@
 import type { Pool, PoolConnection, QueryOptions } from "mysql2/promise";
 import type { Logger } from "pino";
-import { getRequestId } from "#/modules/context/async.context";
+import { getRequestId } from "#modules/context/async.context.js";
 
 export interface IDbMiddlewareOptions {
   /** pino logger instance for slow query logging */

@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import { orThrow } from "my-easy-fp";
 import mysql from "mysql2/promise";
 import { afterAll, assert, beforeAll, describe, expect, it, vi } from "vitest";
-import * as schema from "#/schema/database/schema.drizzle";
+import * as schema from "#schema/database/schema.drizzle.js";
 
 // ---------------------------------------------------------------------------
 // Mock #/loader before importing petRepository / categoryRepository
@@ -20,7 +20,7 @@ vi.mock("#/loader", () => ({
 }));
 
 const { petRepository, handleTags, handleCategory } = await import(
-  "#/repository/database/pet.repository"
+  "#repository/database/pet.repository.js"
 );
 
 // ---------------------------------------------------------------------------
@@ -257,7 +257,9 @@ describe("petRepository", { sequential: true }, () => {
         photoUrls: [],
       });
 
-      const modified = await petRepository.modifyPet(created.id, { name: "BoriNew" });
+      const modified = await petRepository.modifyPet(created.id, {
+        name: "BoriNew",
+      });
 
       expect(modified.name).toBe("BoriNew");
       expect(modified.status).toBe(1);
@@ -355,7 +357,7 @@ describe("petRepository", { sequential: true }, () => {
       await petRepository.deletePet(created.id);
 
       // The tag should be gone since no other pet references it
-      const { tagRepository } = await import("#/repository/database/tag.repository");
+      const { tagRepository } = await import("#repository/database/tag.repository.js");
       await expect(tagRepository.readTagById(tagId)).rejects.toThrow("Cannot found Tag");
     });
 
@@ -392,7 +394,7 @@ describe("petRepository", { sequential: true }, () => {
       // Delete the first pet — category must still exist because PetBeta uses it
       await petRepository.deletePet(first.id);
 
-      const { categoryRepository } = await import("#/repository/database/category.repository");
+      const { categoryRepository } = await import("#repository/database/category.repository.js");
       const category = await categoryRepository.readCategoryById(first.category.id);
       expect(category.name).toBe("SharedCat");
     });
@@ -590,7 +592,7 @@ describe("petRepository", { sequential: true }, () => {
       await petRepository.deletePet(firstPet.id);
 
       // The shared tag should NOT be deleted because second pet still uses it
-      const { tagRepository } = await import("#/repository/database/tag.repository");
+      const { tagRepository } = await import("#repository/database/tag.repository.js");
       const stillExistingTag = await tagRepository.readTagById(sharedTagId);
       expect(stillExistingTag.name).toBe(sharedTagName);
 
