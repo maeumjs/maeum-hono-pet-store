@@ -17,8 +17,8 @@
     "clean": "rimraf dist",
     "dev": "nodemon --config ./.configs/nodemon.json",
     "debug": "cross-env DEBUG=maeum:* ENV_APPLICATION_LOG_LEVEL=debug tsx --tsconfig tsconfig.json --import src/loader.ts --inspect-brk --nolazy src/app.ts",
-    "lint": "eslint --cache .",
-    "lint-staged": "lint-staged",
+    "lint": "biome check .",
+    "lint-staged": "biome check --write --staged --files-ignore-unknown=true --no-errors-on-unmatched",
     "prettier": "prettier --write src/**/*.ts",
     "lnb": "run-p build lint",
     "route": "cross-env NODE_ENV=production fast-maker route --config .configs/.fastmakerrc",
@@ -38,6 +38,7 @@
   "author": "ByungJoon Lee",
   "license": "MIT",
   "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
     "@eslint/compat": "^2.0.1",
     "@eslint/js": "^9.39.2",
     "@testcontainers/mysql": "^11.12.0",
