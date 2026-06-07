@@ -1,52 +1,50 @@
-import { createRoute } from '@hono/zod-openapi';
-import { z } from 'zod';
-
-import { tagRepository } from '#/repository/database/tag.repository';
-import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
-import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { TagResponseSchema } from '#/schema/database/schema.response.zod';
-
-import type { RouteHandler } from '@hono/zod-openapi';
+import type { RouteHandler } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { z } from "zod";
+import { tagRepository } from "#/repository/database/tag.repository";
+import { SignedLongStringSchema } from "#/schema/common/long.string.zod";
+import { RestErrorSchema } from "#/schema/common/rest.error.zod";
+import { TagResponseSchema } from "#/schema/database/schema.response.zod";
 
 export const readTagByIdRoute = createRoute({
-  method: 'get',
-  path: '/tag/{id}',
-  description: 'Read Tag By ID(PK)',
-  operationId: 'readTagById',
-  tags: ['Tag'],
+  method: "get",
+  path: "/tag/{id}",
+  description: "Read Tag By ID(PK)",
+  operationId: "readTagById",
+  tags: ["Tag"],
   request: {
     params: z.object({ id: SignedLongStringSchema }).openapi({
       param: {
-        name: 'id',
-        in: 'path',
+        name: "id",
+        in: "path",
       },
-      example: '1',
+      example: "1",
     }),
   },
   responses: {
     200: {
       content: {
-        'application/json': {
-          schema: TagResponseSchema.openapi('Tag'),
+        "application/json": {
+          schema: TagResponseSchema.openapi("Tag"),
         },
       },
-      description: 'Tag read successfully',
+      description: "Tag read successfully",
     },
     404: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Tag not found',
+      description: "Tag not found",
     },
     500: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Internal Server Error',
+      description: "Internal Server Error",
     },
   },
 });
@@ -56,7 +54,7 @@ export const readTagByIdHandler: RouteHandler<typeof readTagByIdRoute> = async (
   const result = results?.at(0);
 
   if (result == null) {
-    return c.json({ code: 'not found', message: 'tag not found' }, 404);
+    return c.json({ code: "not found", message: "tag not found" }, 404);
   }
 
   return c.json(TagResponseSchema.parse(result), 200);

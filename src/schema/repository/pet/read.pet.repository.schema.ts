@@ -1,11 +1,11 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 import {
   CategorySelectSchema,
   PetSelectSchema,
   PhotoUrlSelectSchema,
   TagSelectSchema,
-} from '#/schema/database/schema.zod';
+} from "#/schema/database/schema.zod";
 
 export const ReadPetRepositorySchema = PetSelectSchema.omit({ categoryId: true }).extend({
   category: CategorySelectSchema,

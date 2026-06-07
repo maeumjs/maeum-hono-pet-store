@@ -1,4 +1,4 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
+import { OpenAPIHono } from "@hono/zod-openapi";
 
 export function initApp(): OpenAPIHono {
   const app = new OpenAPIHono();

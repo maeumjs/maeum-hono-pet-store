@@ -1,29 +1,27 @@
-import { createRoute } from '@hono/zod-openapi';
-
-import { categoryRepository } from '#/repository/database/category.repository';
-import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { CategoryResponseSchema } from '#/schema/database/schema.response.zod';
-import { CategoryUpdateSchema } from '#/schema/database/schema.zod';
-
-import type { RouteHandler } from '@hono/zod-openapi';
+import type { RouteHandler } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { categoryRepository } from "#/repository/database/category.repository";
+import { RestErrorSchema } from "#/schema/common/rest.error.zod";
+import { CategoryResponseSchema } from "#/schema/database/schema.response.zod";
+import { CategoryUpdateSchema } from "#/schema/database/schema.zod";
 
 export const modifyCategoryByIdRoute = createRoute({
-  method: 'patch',
-  path: '/category/{id}',
-  description: 'Modify Category',
-  operationId: 'modifyCategoryById',
-  tags: ['Category'],
+  method: "patch",
+  path: "/category/{id}",
+  description: "Modify Category",
+  operationId: "modifyCategoryById",
+  tags: ["Category"],
   request: {
     params: CategoryUpdateSchema.pick({ id: true }).openapi({
       param: {
-        name: 'id',
-        in: 'path',
+        name: "id",
+        in: "path",
       },
-      example: '1',
+      example: "1",
     }),
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: CategoryUpdateSchema.omit({ id: true }),
         },
       },
@@ -32,35 +30,35 @@ export const modifyCategoryByIdRoute = createRoute({
   responses: {
     200: {
       content: {
-        'application/json': {
-          schema: CategoryResponseSchema.openapi('Category'),
+        "application/json": {
+          schema: CategoryResponseSchema.openapi("Category"),
         },
       },
-      description: 'Category created successfully',
+      description: "Category created successfully",
     },
     400: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Request parameter error or authorization error',
+      description: "Request parameter error or authorization error",
     },
     404: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Not found',
+      description: "Not found",
     },
     500: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Internal Server Error',
+      description: "Internal Server Error",
     },
   },
 });

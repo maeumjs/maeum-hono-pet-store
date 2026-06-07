@@ -1,27 +1,25 @@
-import { eq } from 'drizzle-orm';
-import { atOrThrow, orThrow } from 'my-easy-fp';
+import { eq } from "drizzle-orm";
+import { atOrThrow, orThrow } from "my-easy-fp";
+import type z from "zod";
+import { container } from "#/loader";
+import { NotFoundError } from "#/modules/error/not.found.error";
+import { uuidV7Binary } from "#/modules/uuid/uuid.buffer";
+import { categories } from "#/schema/database/schema.drizzle";
 
-import { container } from '#/loader';
-import { NotFoundError } from '#/modules/error/not.found.error';
-import { uuidV7Binary } from '#/modules/uuid/uuid.buffer';
-import { categories } from '#/schema/database/schema.drizzle';
-
-import type z from 'zod';
-
-import type { TDataSource } from '#/schema/database/schema.type';
+import type { TDataSource } from "#/schema/database/schema.type";
 import type {
   CategoryInsertSchema,
   CategoryModifySchema,
   CategorySelectSchema,
   CategoryUpdateSchema,
-} from '#/schema/database/schema.zod';
+} from "#/schema/database/schema.zod";
 
 async function readNullableCategoryById(
   id: bigint,
-  use: keyof typeof container.db = 'reader',
+  use: keyof typeof container.db = "reader",
 ): Promise<z.infer<typeof CategorySelectSchema>[]> {
   // Drizzle ORM으로 tag select
-  if (use == null || use === 'reader') {
+  if (use == null || use === "reader") {
     return container.db.reader.select().from(categories).where(eq(categories.id, id));
   }
 
@@ -30,7 +28,7 @@ async function readNullableCategoryById(
 
 async function readCategoryById(
   id: bigint,
-  use: keyof typeof container.db = 'reader',
+  use: keyof typeof container.db = "reader",
 ): Promise<z.infer<typeof CategorySelectSchema>> {
   // Drizzle ORM으로 tag select
   const result = await readNullableCategoryById(id, use);
@@ -79,7 +77,7 @@ async function updateCategoryById(
     })
     .where(eq(categories.id, id));
 
-  return readCategoryById(id, 'writer');
+  return readCategoryById(id, "writer");
 }
 
 async function deleteCategoryById(id: bigint): Promise<z.infer<typeof CategorySelectSchema>> {
@@ -108,7 +106,7 @@ async function modifyCategoryById(
   // Drizzle ORM으로 category update
   await container.db.writer.update(categories).set({ name: tag.name }).where(eq(categories.id, id));
 
-  return readCategoryById(id, 'writer');
+  return readCategoryById(id, "writer");
 }
 
 export const categoryRepository = {

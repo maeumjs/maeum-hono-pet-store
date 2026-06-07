@@ -1,23 +1,21 @@
-import { createRoute } from '@hono/zod-openapi';
-
-import { tagRepository } from '#/repository/database/tag.repository';
-import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { TagResponseSchema } from '#/schema/database/schema.response.zod';
-import { TagInsertSchema } from '#/schema/database/schema.zod';
-
-import type { RouteHandler } from '@hono/zod-openapi';
+import type { RouteHandler } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { tagRepository } from "#/repository/database/tag.repository";
+import { RestErrorSchema } from "#/schema/common/rest.error.zod";
+import { TagResponseSchema } from "#/schema/database/schema.response.zod";
+import { TagInsertSchema } from "#/schema/database/schema.zod";
 
 export const createTagRoute = createRoute({
-  method: 'post',
-  path: '/tag',
-  description: 'Create Tag',
-  operationId: 'createTag',
-  tags: ['Tag'],
+  method: "post",
+  path: "/tag",
+  description: "Create Tag",
+  operationId: "createTag",
+  tags: ["Tag"],
   request: {
     body: {
       content: {
-        'application/json': {
-          schema: TagInsertSchema.openapi('Tag'),
+        "application/json": {
+          schema: TagInsertSchema.openapi("Tag"),
         },
       },
     },
@@ -25,27 +23,27 @@ export const createTagRoute = createRoute({
   responses: {
     200: {
       content: {
-        'application/json': {
-          schema: TagResponseSchema.openapi('Tag'),
+        "application/json": {
+          schema: TagResponseSchema.openapi("Tag"),
         },
       },
-      description: 'Tag created successfully',
+      description: "Tag created successfully",
     },
     400: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Request parameter error or authorization error',
+      description: "Request parameter error or authorization error",
     },
     500: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Internal Server Error',
+      description: "Internal Server Error",
     },
   },
 });

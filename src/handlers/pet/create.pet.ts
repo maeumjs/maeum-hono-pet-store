@@ -1,22 +1,20 @@
-import { createRoute } from '@hono/zod-openapi';
-
-import { petRepository } from '#/repository/database/pet.repository';
-import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { PetResponseSchema } from '#/schema/database/schema.response.zod';
-import { CreatePetRepositorySchema } from '#/schema/repository/pet/create.pet.repository.schema';
-
-import type { RouteHandler } from '@hono/zod-openapi';
+import type { RouteHandler } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { petRepository } from "#/repository/database/pet.repository";
+import { RestErrorSchema } from "#/schema/common/rest.error.zod";
+import { PetResponseSchema } from "#/schema/database/schema.response.zod";
+import { CreatePetRepositorySchema } from "#/schema/repository/pet/create.pet.repository.schema";
 
 export const createPetRoute = createRoute({
-  method: 'post',
-  path: '/pet',
-  description: 'Create Pet',
-  operationId: 'createPet',
-  tags: ['Pet'],
+  method: "post",
+  path: "/pet",
+  description: "Create Pet",
+  operationId: "createPet",
+  tags: ["Pet"],
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: CreatePetRepositorySchema,
         },
       },
@@ -25,27 +23,27 @@ export const createPetRoute = createRoute({
   responses: {
     200: {
       content: {
-        'application/json': {
-          schema: PetResponseSchema.openapi('Pet'),
+        "application/json": {
+          schema: PetResponseSchema.openapi("Pet"),
         },
       },
-      description: 'Pet created successfully',
+      description: "Pet created successfully",
     },
     400: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Request parameter error or authorization error',
+      description: "Request parameter error or authorization error",
     },
     500: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Internal Server Error',
+      description: "Internal Server Error",
     },
   },
 });

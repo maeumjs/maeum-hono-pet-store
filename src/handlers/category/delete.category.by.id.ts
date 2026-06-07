@@ -1,63 +1,61 @@
-import { createRoute } from '@hono/zod-openapi';
-
-import { categoryRepository } from '#/repository/database/category.repository';
-import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { CategoryResponseSchema } from '#/schema/database/schema.response.zod';
-import { CategoryUpdateSchema } from '#/schema/database/schema.zod';
-
-import type { RouteHandler } from '@hono/zod-openapi';
+import type { RouteHandler } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { categoryRepository } from "#/repository/database/category.repository";
+import { RestErrorSchema } from "#/schema/common/rest.error.zod";
+import { CategoryResponseSchema } from "#/schema/database/schema.response.zod";
+import { CategoryUpdateSchema } from "#/schema/database/schema.zod";
 
 export const deleteCategoryByIdRoute = createRoute({
-  method: 'delete',
-  path: '/category/{id}',
+  method: "delete",
+  path: "/category/{id}",
   // description, operationId를 적을 때 주의해야한다. Description과 함수 이름으로
   // create, read, update, delete 등이 어울릴 수 있겠지만 patch와 put을 구분하기 어렵고
   // head, option과 같은 특수한 목적의 method도 구분하기 어렵다.
   // 때문에 operationId와 handler function name도 method를 사용하는 것을 더 권장한다.
-  description: 'Delete Category',
-  operationId: 'deleteCategoryById',
-  tags: ['Category'],
+  description: "Delete Category",
+  operationId: "deleteCategoryById",
+  tags: ["Category"],
   request: {
     params: CategoryUpdateSchema.pick({ id: true }).openapi({
       param: {
-        name: 'id',
-        in: 'path',
+        name: "id",
+        in: "path",
       },
-      example: '1',
+      example: "1",
     }),
   },
   responses: {
     200: {
       content: {
-        'application/json': {
-          schema: CategoryResponseSchema.openapi('Category'),
+        "application/json": {
+          schema: CategoryResponseSchema.openapi("Category"),
         },
       },
-      description: 'Tag created successfully',
+      description: "Tag created successfully",
     },
     400: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Request parameter error or authorization error',
+      description: "Request parameter error or authorization error",
     },
     404: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Not found',
+      description: "Not found",
     },
     500: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Internal Server Error',
+      description: "Internal Server Error",
     },
   },
 });

@@ -1,11 +1,11 @@
-import { isError } from 'my-easy-fp';
+import { isError } from "my-easy-fp";
 
-import { initApp } from '#/modules/initialize/init.app';
-import { initConfig } from '#/modules/initialize/init.config';
-import { initDb } from '#/modules/initialize/init.db';
-import { initDotEnv } from '#/modules/initialize/init.dot.env';
-import { initLog } from '#/modules/initialize/init.log';
-import { initPackageJson } from '#/modules/initialize/init.package.json';
+import { initApp } from "#/modules/initialize/init.app";
+import { initConfig } from "#/modules/initialize/init.config";
+import { initDb } from "#/modules/initialize/init.db";
+import { initDotEnv } from "#/modules/initialize/init.dot.env";
+import { initLog } from "#/modules/initialize/init.log";
+import { initPackageJson } from "#/modules/initialize/init.package.json";
 
 async function initialize(): Promise<{
   config: Awaited<ReturnType<typeof initConfig>>;
@@ -30,7 +30,7 @@ async function initialize(): Promise<{
       db,
     };
   } catch (caught) {
-    const err = isError(caught, new Error('unknown error raised'));
+    const err = isError(caught, new Error("unknown error raised"));
     console.log(err.message);
     console.log(err.stack);
 

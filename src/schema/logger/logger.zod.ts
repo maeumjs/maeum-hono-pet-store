@@ -1,11 +1,11 @@
-import z from 'zod';
+import z from "zod";
 
-import { ServerConfigurationSchema } from '#/schema/configuration/server.zod';
+import { ServerConfigurationSchema } from "#/schema/configuration/server.zod";
 
-export const LogType = z.enum(['server-start', 'db-connect']);
+export const LogType = z.enum(["server-start", "db-connect"]);
 
 export const ServerStartupLogSchema = z.object({
-  type: LogType.extract(['server-start']),
+  type: LogType.extract(["server-start"]),
   address: z.union([z.ipv4(), z.ipv6()]),
   port: ServerConfigurationSchema.shape.port,
   run_mode: ServerConfigurationSchema.shape.runMode,
@@ -13,7 +13,7 @@ export const ServerStartupLogSchema = z.object({
 });
 
 export const DBConnectLogSchema = z.object({
-  type: LogType.extract(['db-connect']),
+  type: LogType.extract(["db-connect"]),
   sqlite3: z.string(),
 });
 

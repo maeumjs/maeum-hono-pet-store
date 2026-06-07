@@ -1,10 +1,10 @@
-import { serve } from '@hono/node-server';
-import { isError } from 'my-easy-fp';
+import { serve } from "@hono/node-server";
+import { isError } from "my-easy-fp";
 
-import { middleware } from '#/handlers/middleware';
-import { routing } from '#/handlers/route';
-import { container } from '#/loader';
-import { loggerRepository } from '#/repository/logger/logger.respository';
+import { middleware } from "#/handlers/middleware";
+import { routing } from "#/handlers/route";
+import { container } from "#/loader";
+import { loggerRepository } from "#/repository/logger/logger.respository";
 
 async function app() {
   middleware();
@@ -19,7 +19,7 @@ async function app() {
     (info) => {
       container.logger.info(
         loggerRepository.process({
-          type: 'server-start',
+          type: "server-start",
           address: info.address,
           port: container.config.server.port,
           run_mode: container.config.server.runMode,
@@ -32,7 +32,7 @@ async function app() {
 }
 
 app().catch((caught) => {
-  const err = isError(caught, new Error('unknown error raised'));
+  const err = isError(caught, new Error("unknown error raised"));
   console.error(err.message);
   console.error(err.stack);
 });

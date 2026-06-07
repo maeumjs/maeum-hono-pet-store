@@ -1,29 +1,27 @@
-import { createRoute } from '@hono/zod-openapi';
-
-import { tagRepository } from '#/repository/database/tag.repository';
-import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { TagResponseSchema } from '#/schema/database/schema.response.zod';
-import { TagUpdateSchema } from '#/schema/database/schema.zod';
-
-import type { RouteHandler } from '@hono/zod-openapi';
+import type { RouteHandler } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { tagRepository } from "#/repository/database/tag.repository";
+import { RestErrorSchema } from "#/schema/common/rest.error.zod";
+import { TagResponseSchema } from "#/schema/database/schema.response.zod";
+import { TagUpdateSchema } from "#/schema/database/schema.zod";
 
 export const updateTagByIdRoute = createRoute({
-  method: 'put',
-  path: '/tag/{id}',
-  description: 'Update Tag',
-  operationId: 'updateTagById',
-  tags: ['Tag'],
+  method: "put",
+  path: "/tag/{id}",
+  description: "Update Tag",
+  operationId: "updateTagById",
+  tags: ["Tag"],
   request: {
     params: TagUpdateSchema.pick({ id: true }).openapi({
       param: {
-        name: 'id',
-        in: 'path',
+        name: "id",
+        in: "path",
       },
-      example: '1',
+      example: "1",
     }),
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: TagUpdateSchema.omit({ id: true }),
         },
       },
@@ -32,35 +30,35 @@ export const updateTagByIdRoute = createRoute({
   responses: {
     200: {
       content: {
-        'application/json': {
-          schema: TagResponseSchema.openapi('Tag'),
+        "application/json": {
+          schema: TagResponseSchema.openapi("Tag"),
         },
       },
-      description: 'Tag created successfully',
+      description: "Tag created successfully",
     },
     400: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Request parameter error or authorization error',
+      description: "Request parameter error or authorization error",
     },
     404: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Not found',
+      description: "Not found",
     },
     500: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Internal Server Error',
+      description: "Internal Server Error",
     },
   },
 });

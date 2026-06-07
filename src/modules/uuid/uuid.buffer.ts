@@ -1,4 +1,4 @@
-import { parse, v7 as uuidV7 } from 'uuid';
+import { parse, v7 as uuidV7 } from "uuid";
 
 /**
  * Generates a UUID v7 and returns it as a 16-byte Buffer cast to string,

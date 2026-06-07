@@ -1,16 +1,12 @@
-import fs from 'node:fs/promises';
+import fs from "node:fs/promises";
+import type { Writable } from "node:stream";
+import dayjs from "dayjs";
+import pathe from "pathe";
+import pino from "pino";
+import type { z } from "zod";
+import { createConsoleTransport } from "#/modules/logging/create.console.transport";
 
-import dayjs from 'dayjs';
-import pathe from 'pathe';
-import pino from 'pino';
-
-import { createConsoleTransport } from '#/modules/logging/create.console.transport';
-
-import type { Writable } from 'node:stream';
-
-import type { z } from 'zod';
-
-import type { ConfigurationSchema } from '#/schema/configuration/configuration.zod';
+import type { ConfigurationSchema } from "#/schema/configuration/configuration.zod";
 
 export type TLogTransport = pino.StreamEntry;
 
@@ -30,13 +26,13 @@ export async function initLog(
     console.error(err.stack);
   });
 
-  const logFilePath = pathe.join(logDir, 'nodejs.log');
+  const logFilePath = pathe.join(logDir, "nodejs.log");
 
   const streams: pino.StreamEntry[] = [
     // Write to log file
     { stream: pino.destination({ dest: logFilePath, sync: false }) },
     // Console transport for development only
-    ...(config.server.runMode === 'local' ? [createConsoleTransport()] : []),
+    ...(config.server.runMode === "local" ? [createConsoleTransport()] : []),
     // Additional transports (e.g. Prometheus, stdout)
     ...transports,
   ];
@@ -45,7 +41,7 @@ export async function initLog(
     {
       level: config.server.log.level,
       timestamp: () => {
-        const localTime = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        const localTime = dayjs().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
         return `,"time":"${localTime}"`;
       },
     },
@@ -59,6 +55,6 @@ export async function initLog(
  * Creates a writable stream transport entry for pino multistream.
  * Use this to add custom transports such as Prometheus metrics collectors.
  */
-export function createTransport(stream: Writable, level: pino.Level = 'info'): TLogTransport {
+export function createTransport(stream: Writable, level: pino.Level = "info"): TLogTransport {
   return { stream, level };
 }

@@ -1,31 +1,29 @@
-import { createRoute } from '@hono/zod-openapi';
-import { z } from 'zod';
-
-import { petRepository } from '#/repository/database/pet.repository';
-import { SignedLongStringSchema } from '#/schema/common/long.string.zod';
-import { RestErrorSchema } from '#/schema/common/rest.error.zod';
-import { PetResponseSchema } from '#/schema/database/schema.response.zod';
-import { ModifyPetRepositorySchema } from '#/schema/repository/pet/modify.pet.repository.schema';
-
-import type { RouteHandler } from '@hono/zod-openapi';
+import type { RouteHandler } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { z } from "zod";
+import { petRepository } from "#/repository/database/pet.repository";
+import { SignedLongStringSchema } from "#/schema/common/long.string.zod";
+import { RestErrorSchema } from "#/schema/common/rest.error.zod";
+import { PetResponseSchema } from "#/schema/database/schema.response.zod";
+import { ModifyPetRepositorySchema } from "#/schema/repository/pet/modify.pet.repository.schema";
 
 export const modifyPetRoute = createRoute({
-  method: 'patch',
-  path: '/pet/{id}',
-  description: 'Modify Pet',
-  operationId: 'modifyPetById',
-  tags: ['Pet'],
+  method: "patch",
+  path: "/pet/{id}",
+  description: "Modify Pet",
+  operationId: "modifyPetById",
+  tags: ["Pet"],
   request: {
     params: z.object({ id: SignedLongStringSchema }).openapi({
       param: {
-        name: 'id',
-        in: 'path',
+        name: "id",
+        in: "path",
       },
-      example: '1',
+      example: "1",
     }),
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: ModifyPetRepositorySchema,
         },
       },
@@ -34,35 +32,35 @@ export const modifyPetRoute = createRoute({
   responses: {
     200: {
       content: {
-        'application/json': {
-          schema: PetResponseSchema.openapi('Pet'),
+        "application/json": {
+          schema: PetResponseSchema.openapi("Pet"),
         },
       },
-      description: 'Pet modify successfully',
+      description: "Pet modify successfully",
     },
     400: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Request parameter error or authorization error',
+      description: "Request parameter error or authorization error",
     },
     404: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Not found',
+      description: "Not found",
     },
     500: {
       content: {
-        'application/json': {
-          schema: RestErrorSchema.openapi('Error'),
+        "application/json": {
+          schema: RestErrorSchema.openapi("Error"),
         },
       },
-      description: 'Internal Server Error',
+      description: "Internal Server Error",
     },
   },
 });

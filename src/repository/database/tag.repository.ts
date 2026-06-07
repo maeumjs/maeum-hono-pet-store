@@ -1,26 +1,24 @@
-import { eq, inArray } from 'drizzle-orm';
-import { atOrThrow, orThrow } from 'my-easy-fp';
-
-import { container } from '#/loader';
-import { NotFoundError } from '#/modules/error/not.found.error';
-import { uuidV7Binary } from '#/modules/uuid/uuid.buffer';
-import { tags } from '#/schema/database/schema.drizzle';
-
-import type z from 'zod';
+import { eq, inArray } from "drizzle-orm";
+import { atOrThrow, orThrow } from "my-easy-fp";
+import type z from "zod";
+import { container } from "#/loader";
+import { NotFoundError } from "#/modules/error/not.found.error";
+import { uuidV7Binary } from "#/modules/uuid/uuid.buffer";
+import { tags } from "#/schema/database/schema.drizzle";
 
 import type {
   TagInsertSchema,
   TagModifySchema,
   TagSelectSchema,
   TagUpdateSchema,
-} from '#/schema/database/schema.zod';
+} from "#/schema/database/schema.zod";
 
 async function readNullableTagById(
   id: bigint,
-  use: keyof typeof container.db = 'reader',
+  use: keyof typeof container.db = "reader",
 ): Promise<z.infer<typeof TagSelectSchema>[] | undefined> {
   // Drizzle ORM으로 tag select
-  if (use == null || use === 'reader') {
+  if (use == null || use === "reader") {
     return container.db.reader.select().from(tags).where(eq(tags.id, id));
   }
 
@@ -29,7 +27,7 @@ async function readNullableTagById(
 
 async function readTagById(
   id: bigint,
-  use: keyof typeof container.db = 'reader',
+  use: keyof typeof container.db = "reader",
 ): Promise<z.infer<typeof TagSelectSchema>> {
   // Drizzle ORM으로 tag select
   const result = await readNullableTagById(id, use);
@@ -38,10 +36,10 @@ async function readTagById(
 
 async function readTagsByIds(
   ids: bigint[],
-  use: keyof typeof container.db = 'reader',
+  use: keyof typeof container.db = "reader",
 ): Promise<z.infer<typeof TagSelectSchema>[]> {
   // Drizzle ORM으로 tag select
-  if (use == null || use === 'reader') {
+  if (use == null || use === "reader") {
     return container.db.reader.select().from(tags).where(inArray(tags.id, ids));
   }
 
@@ -57,14 +55,14 @@ async function createTag(
     .values({ uuid: uuidV7Binary(), name: tag.name })
     .$returningId();
 
-  return readTagById(orThrow(result).id, 'writer');
+  return readTagById(orThrow(result).id, "writer");
 }
 
 async function updateTagById(
   id: bigint,
   tag: z.infer<typeof TagUpdateSchema>,
 ): Promise<z.infer<typeof TagSelectSchema>> {
-  const result = await readNullableTagById(id, 'writer');
+  const result = await readNullableTagById(id, "writer");
 
   if (result == null || result.length <= 0) {
     throw new NotFoundError(`Cannot found Tag(${id.toString()})`);
@@ -78,11 +76,11 @@ async function updateTagById(
     })
     .where(eq(tags.id, id));
 
-  return readTagById(id, 'writer');
+  return readTagById(id, "writer");
 }
 
 async function deleteTagById(id: bigint): Promise<z.infer<typeof TagSelectSchema>> {
-  const result = await readNullableTagById(id, 'writer');
+  const result = await readNullableTagById(id, "writer");
 
   if (result == null || result.length <= 0) {
     throw new NotFoundError(`Cannot found Tag(${id.toString()})`);
@@ -98,7 +96,7 @@ async function modifyTagById(
   id: bigint,
   tag: z.infer<typeof TagModifySchema>,
 ): Promise<z.infer<typeof TagSelectSchema>> {
-  const result = await readNullableTagById(id, 'writer');
+  const result = await readNullableTagById(id, "writer");
 
   if (result == null || result.length <= 0) {
     throw new NotFoundError(`Cannot found Tag(${id.toString()})`);
@@ -107,7 +105,7 @@ async function modifyTagById(
   // Drizzle ORM으로 tag update
   await container.db.writer.update(tags).set({ name: tag.name }).where(eq(tags.id, id));
 
-  return readTagById(id, 'writer');
+  return readTagById(id, "writer");
 }
 
 export const tagRepository = {

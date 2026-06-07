@@ -1,6 +1,5 @@
-import { LogSchema } from '#/schema/logger/logger.zod';
-
-import type { z } from 'zod';
+import type { z } from "zod";
+import { LogSchema } from "#/schema/logger/logger.zod";
 
 type TLogInput = z.infer<typeof LogSchema>;
 
@@ -42,11 +41,11 @@ export function process(log: unknown): TLogInput {
 
   // Type-specific processing based on discriminator
   switch (validatedLog.type) {
-    case 'server-start':
+    case "server-start":
       // Handle server-start specific logic
       return validatedLog;
 
-    case 'db-connect':
+    case "db-connect":
       return validatedLog;
 
     default:

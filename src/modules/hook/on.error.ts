@@ -1,6 +1,5 @@
-import { HttpError } from '#/modules/error/http.error';
-
-import type { ErrorHandler } from 'hono';
+import type { ErrorHandler } from "hono";
+import { HttpError } from "#/modules/error/http.error";
 
 export const onError: ErrorHandler = (err, c) => {
   if (err instanceof HttpError) {
@@ -10,5 +9,5 @@ export const onError: ErrorHandler = (err, c) => {
     );
   }
 
-  return c.json({ code: 'internal server error', message: err.message }, 500);
+  return c.json({ code: "internal server error", message: err.message }, 500);
 };

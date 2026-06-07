@@ -1,6 +1,6 @@
-import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod';
+import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 
-import { categories, pets, photoUrls, tags } from '#/schema/database/schema.drizzle';
+import { categories, pets, photoUrls, tags } from "#/schema/database/schema.drizzle";
 
 // ------------------------------------------------------------------------------------------
 // Category Schema

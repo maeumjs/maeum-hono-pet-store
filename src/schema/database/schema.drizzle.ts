@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm';
+import { relations } from "drizzle-orm";
 import {
   bigint,
   binary,
@@ -7,54 +7,54 @@ import {
   mysqlTable,
   primaryKey,
   varchar,
-} from 'drizzle-orm/mysql-core';
+} from "drizzle-orm/mysql-core";
 
 // ------------------------------------------------------------------------------------
 // Schema
 // ------------------------------------------------------------------------------------
 
-export const tags = mysqlTable('tags', {
-  id: bigint('id', { mode: 'bigint', unsigned: true }).autoincrement().primaryKey(),
-  uuid: binary('uuid', { length: 16 }).notNull().unique(),
+export const tags = mysqlTable("tags", {
+  id: bigint("id", { mode: "bigint", unsigned: true }).autoincrement().primaryKey(),
+  uuid: binary("uuid", { length: 16 }).notNull().unique(),
   // uuid: char('uuid', { length: 36 }).notNull().unique(),
-  name: varchar('name', { length: 100 }).notNull(),
+  name: varchar("name", { length: 100 }).notNull(),
 });
 
-export const categories = mysqlTable('categories', {
-  id: bigint('id', { mode: 'bigint', unsigned: true }).autoincrement().primaryKey(),
-  uuid: binary('uuid', { length: 16 }).notNull().unique(),
-  name: varchar('name', { length: 100 }).notNull(),
+export const categories = mysqlTable("categories", {
+  id: bigint("id", { mode: "bigint", unsigned: true }).autoincrement().primaryKey(),
+  uuid: binary("uuid", { length: 16 }).notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
 });
 
-export const photoUrls = mysqlTable('photo_urls', {
-  id: bigint('id', { mode: 'bigint', unsigned: true }).autoincrement().primaryKey(),
-  uuid: binary('uuid', { length: 16 }).notNull().unique(),
-  url: varchar('url', { length: 500 }).notNull(),
-  petId: bigint('pet_id', { mode: 'bigint', unsigned: true }).notNull(),
+export const photoUrls = mysqlTable("photo_urls", {
+  id: bigint("id", { mode: "bigint", unsigned: true }).autoincrement().primaryKey(),
+  uuid: binary("uuid", { length: 16 }).notNull().unique(),
+  url: varchar("url", { length: 500 }).notNull(),
+  petId: bigint("pet_id", { mode: "bigint", unsigned: true }).notNull(),
 });
 
-export const pets = mysqlTable('pets', {
-  id: bigint('id', { mode: 'bigint', unsigned: true }).autoincrement().primaryKey(),
-  uuid: binary('uuid', { length: 16 }).notNull().unique(),
-  name: varchar('name', { length: 100 }).notNull(),
-  status: int('status').notNull(),
-  categoryId: bigint('category_id', { mode: 'bigint', unsigned: true }).notNull(),
+export const pets = mysqlTable("pets", {
+  id: bigint("id", { mode: "bigint", unsigned: true }).autoincrement().primaryKey(),
+  uuid: binary("uuid", { length: 16 }).notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
+  status: int("status").notNull(),
+  categoryId: bigint("category_id", { mode: "bigint", unsigned: true }).notNull(),
 });
 
 // ------------------------------------------------------------------------------------
 // N:N Bridge Table
 // ------------------------------------------------------------------------------------
 export const petsToTags = mysqlTable(
-  'pets_to_tags',
+  "pets_to_tags",
   {
-    petId: bigint('pet_id', { mode: 'bigint', unsigned: true }).notNull(),
-    tagId: bigint('tag_id', { mode: 'bigint', unsigned: true }).notNull(),
+    petId: bigint("pet_id", { mode: "bigint", unsigned: true }).notNull(),
+    tagId: bigint("tag_id", { mode: "bigint", unsigned: true }).notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.petId, table.tagId] }),
     // mysql-core에서 가져온 index 함수를 사용합니다.
-    petIdIdx: index('idx__pet_id').on(table.petId),
-    tagIdIdx: index('idx__tag_id').on(table.tagId),
+    petIdIdx: index("idx__pet_id").on(table.petId),
+    tagIdIdx: index("idx__tag_id").on(table.tagId),
   }),
 );
 

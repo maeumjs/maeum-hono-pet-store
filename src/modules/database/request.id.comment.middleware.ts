@@ -1,7 +1,6 @@
-import { getRequestId } from '#/modules/context/async.context';
-
-import type { Pool, PoolConnection, QueryOptions } from 'mysql2/promise';
-import type { Logger } from 'pino';
+import type { Pool, PoolConnection, QueryOptions } from "mysql2/promise";
+import type { Logger } from "pino";
+import { getRequestId } from "#/modules/context/async.context";
 
 export interface IDbMiddlewareOptions {
   /** pino logger instance for slow query logging */
@@ -21,7 +20,7 @@ function patchQueryAndExecute(target: Pool | PoolConnection, options: IDbMiddlew
   const originalExecute = target.execute.bind(target);
 
   function wrapSql(sql: string | QueryOptions): string | QueryOptions {
-    if (typeof sql === 'string') {
+    if (typeof sql === "string") {
       return prependRequestIdComment(sql);
     }
 
@@ -37,8 +36,8 @@ function patchQueryAndExecute(target: Pool | PoolConnection, options: IDbMiddlew
     const elapsedMs = performance.now() - start;
 
     if (elapsedMs >= slowQueryThresholdMs) {
-      const rawSql = typeof annotatedSql === 'string' ? annotatedSql : annotatedSql.sql;
-      logger.warn({ elapsedMs: Math.round(elapsedMs), sql: rawSql }, 'slow query detected');
+      const rawSql = typeof annotatedSql === "string" ? annotatedSql : annotatedSql.sql;
+      logger.warn({ elapsedMs: Math.round(elapsedMs), sql: rawSql }, "slow query detected");
     }
 
     return result;

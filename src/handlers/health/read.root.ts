@@ -1,25 +1,23 @@
-import { createRoute } from '@hono/zod-openapi';
-import { z } from 'zod';
+import type { RouteConfig, RouteHandler } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { z } from "zod";
+import { container } from "#/loader";
+import { ServerConfigurationSchema } from "#/schema/configuration/server.zod";
 
-import { container } from '#/loader';
-import { ServerConfigurationSchema } from '#/schema/configuration/server.zod';
+const path = "/";
 
-import type { RouteConfig, RouteHandler } from '@hono/zod-openapi';
-
-const path = '/';
-
-const method: RouteConfig['method'] = 'get';
+const method: RouteConfig["method"] = "get";
 
 export const route = createRoute({
   method,
   path,
-  description: 'Server Health',
-  operationId: 'readRoot',
-  tags: ['Common'],
+  description: "Server Health",
+  operationId: "readRoot",
+  tags: ["Common"],
   responses: {
     200: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             server: ServerConfigurationSchema.omit({
               log: true,
@@ -27,7 +25,7 @@ export const route = createRoute({
           }),
         },
       },
-      description: 'Server Health',
+      description: "Server Health",
     },
   },
 });

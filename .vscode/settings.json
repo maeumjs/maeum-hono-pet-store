@@ -32,7 +32,12 @@
     "resources/configs/config.*.json": "jsonc"
   },
   "files.eol": "\n",
-  "eslint.validate": ["typescript", "typescriptreact"],
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "formattingToggle.affects": ["editor.formatOnSave"],
   "files.insertFinalNewline": true
 }

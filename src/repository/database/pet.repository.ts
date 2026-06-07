@@ -1,30 +1,28 @@
-import { and, eq, inArray } from 'drizzle-orm';
-import { orThrow } from 'my-easy-fp';
-import { omit, shake } from 'radash';
+import { and, eq, inArray } from "drizzle-orm";
+import { orThrow } from "my-easy-fp";
+import { omit, shake } from "radash";
+import type { z } from "zod";
+import { container } from "#/loader";
+import { NotFoundError } from "#/modules/error/not.found.error";
+import { uuidV7Binary } from "#/modules/uuid/uuid.buffer";
+import { categoryRepository } from "#/repository/database/category.repository";
+import { categories, pets, petsToTags, photoUrls, tags } from "#/schema/database/schema.drizzle";
 
-import { container } from '#/loader';
-import { NotFoundError } from '#/modules/error/not.found.error';
-import { uuidV7Binary } from '#/modules/uuid/uuid.buffer';
-import { categoryRepository } from '#/repository/database/category.repository';
-import { categories, pets, petsToTags, photoUrls, tags } from '#/schema/database/schema.drizzle';
-
-import type { z } from 'zod';
-
-import type { TDataSource } from '#/schema/database/schema.type';
-import type { CreatePetRepositorySchema } from '#/schema/repository/pet/create.pet.repository.schema';
-import type { ModifyPetRepositorySchema } from '#/schema/repository/pet/modify.pet.repository.schema';
-import type { ReadPetRepositorySchema } from '#/schema/repository/pet/read.pet.repository.schema';
-import type { UpdatePetRepositorySchema } from '#/schema/repository/pet/update.pet.repository.schema';
+import type { TDataSource } from "#/schema/database/schema.type";
+import type { CreatePetRepositorySchema } from "#/schema/repository/pet/create.pet.repository.schema";
+import type { ModifyPetRepositorySchema } from "#/schema/repository/pet/modify.pet.repository.schema";
+import type { ReadPetRepositorySchema } from "#/schema/repository/pet/read.pet.repository.schema";
+import type { UpdatePetRepositorySchema } from "#/schema/repository/pet/update.pet.repository.schema";
 
 export async function handleTags(
   db: TDataSource,
-  values: z.infer<typeof UpdatePetRepositorySchema>['tags'],
+  values: z.infer<typeof UpdatePetRepositorySchema>["tags"],
 ): Promise<{
-  selected: z.infer<typeof ReadPetRepositorySchema>['tags'];
-  inserted: z.infer<typeof ReadPetRepositorySchema>['tags'];
-  all: z.infer<typeof ReadPetRepositorySchema>['tags'];
+  selected: z.infer<typeof ReadPetRepositorySchema>["tags"];
+  inserted: z.infer<typeof ReadPetRepositorySchema>["tags"];
+  all: z.infer<typeof ReadPetRepositorySchema>["tags"];
 }> {
-  const existsTagIds = values.flatMap((tag) => ('id' in tag ? [tag.id] : []));
+  const existsTagIds = values.flatMap((tag) => ("id" in tag ? [tag.id] : []));
   const selectedTags =
     existsTagIds.length > 0
       ? await db.select().from(tags).where(inArray(tags.id, existsTagIds))
@@ -35,10 +33,10 @@ export async function handleTags(
 
   if (missingIds.length > 0) {
     // 존재하지 않는 태그 ID가 포함된 경우 처리
-    throw new NotFoundError(`Cannot found Tag: ${missingIds.join(', ')}`);
+    throw new NotFoundError(`Cannot found Tag: ${missingIds.join(", ")}`);
   }
 
-  const willInsertTags = values.flatMap((tag) => ('name' in tag ? [tag.name] : []));
+  const willInsertTags = values.flatMap((tag) => ("name" in tag ? [tag.name] : []));
   const insertedTagIds =
     willInsertTags.length > 0
       ? await db
@@ -65,9 +63,9 @@ export async function handleTags(
 
 export async function handleCategory(
   db: TDataSource,
-  category: z.infer<typeof UpdatePetRepositorySchema>['category'],
-): Promise<z.infer<typeof ReadPetRepositorySchema>['category']> {
-  if ('id' in category) {
+  category: z.infer<typeof UpdatePetRepositorySchema>["category"],
+): Promise<z.infer<typeof ReadPetRepositorySchema>["category"]> {
+  if ("id" in category) {
     const selectedCategory = await db.query.categories.findFirst({
       where: eq(categories.id, category.id),
     });
@@ -82,7 +80,7 @@ export async function handleCategory(
     .$returningId();
   const insertedCategory = await categoryRepository.readCategoryById(
     orThrow(insertedCategoryId?.id),
-    'writer',
+    "writer",
   );
 
   return insertedCategory;
@@ -133,10 +131,10 @@ async function handlePhotoUrls(
 
 async function readPetById(
   id: bigint,
-  use: keyof typeof container.db = 'reader',
+  use: keyof typeof container.db = "reader",
 ): Promise<z.infer<typeof ReadPetRepositorySchema>> {
   // Drizzle ORM으로 pet select
-  const db = use === 'writer' ? container.db.writer : container.db.reader;
+  const db = use === "writer" ? container.db.writer : container.db.reader;
 
   const result = await db.query.pets.findFirst({
     where: eq(pets.id, id),
@@ -161,7 +159,7 @@ async function readPetById(
       ...result,
       tags: result?.petsToTags.map((relation) => relation.tag),
     },
-    ['petsToTags', 'categoryId'],
+    ["petsToTags", "categoryId"],
   );
 
   return selectedPet;
@@ -207,10 +205,10 @@ async function createPet(
 
       return insertedPetId.id;
     },
-    { isolationLevel: 'read committed' },
+    { isolationLevel: "read committed" },
   );
 
-  const insertedPet = await readPetById(id, 'writer');
+  const insertedPet = await readPetById(id, "writer");
   return orThrow(insertedPet);
 }
 
@@ -239,10 +237,10 @@ async function updatePet(
         })
         .where(eq(pets.id, id));
     },
-    { isolationLevel: 'read committed' },
+    { isolationLevel: "read committed" },
   );
 
-  const updatedPet = await readPetById(id, 'writer');
+  const updatedPet = await readPetById(id, "writer");
 
   return orThrow(updatedPet);
 }
@@ -278,17 +276,17 @@ async function modifyPet(
       }
     },
     {
-      isolationLevel: 'read committed',
+      isolationLevel: "read committed",
     },
   );
 
-  const updatedPet = await readPetById(id, 'writer');
+  const updatedPet = await readPetById(id, "writer");
 
   return orThrow(updatedPet);
 }
 
 async function deletePet(id: bigint): Promise<z.infer<typeof ReadPetRepositorySchema>> {
-  const selectedPet = await readPetById(id, 'writer');
+  const selectedPet = await readPetById(id, "writer");
 
   await container.db.writer.transaction(async (tx) => {
     // 1. 삭제할 펫이 가진 태그 ID 목록을 먼저 확보 (Dangling Tag 체크용)

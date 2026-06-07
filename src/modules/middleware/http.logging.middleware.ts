@@ -1,26 +1,25 @@
-import { container } from '#/loader';
-
-import type { MiddlewareHandler } from 'hono';
+import type { MiddlewareHandler } from "hono";
+import { container } from "#/loader";
 
 export function httpLoggingMiddleware(): MiddlewareHandler {
   return async (c, next) => {
     // Clone request BEFORE next() - just reference, no parsing
-    const requestContentType = c.req.header('content-type') ?? '';
-    const contentLength = Number.parseInt(c.req.header('content-length') ?? '0', 10);
+    const requestContentType = c.req.header("content-type") ?? "";
+    const contentLength = Number.parseInt(c.req.header("content-length") ?? "0", 10);
     const clonedRequest = c.req.raw.clone();
     const startedAt = Date.now();
 
     // Log incoming request
     container.logger.info(
       {
-        req_id: c.get('requestId'),
+        req_id: c.get("requestId"),
         method: c.req.method,
         url: c.req.path,
         params: c.req.param(),
         content_type: requestContentType,
         content_length: contentLength,
       },
-      'Request received',
+      "Request received",
     );
 
     let caughtError: unknown;
@@ -32,7 +31,7 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
     }
 
     // Parse request body AFTER next()
-    const isDevelopment = container.config.server.runMode !== 'production';
+    const isDevelopment = container.config.server.runMode !== "production";
     let requestBody: unknown;
 
     // Skip parsing if content is too large (> 10MB)
@@ -41,13 +40,13 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
     try {
       if (contentLength > MAX_BODY_SIZE) {
         requestBody = `[Body too large: ${contentLength} bytes, skipped logging]`;
-      } else if (requestContentType.includes('application/json')) {
+      } else if (requestContentType.includes("application/json")) {
         requestBody = await clonedRequest.json();
-      } else if (requestContentType.includes('text/')) {
+      } else if (requestContentType.includes("text/")) {
         requestBody = await clonedRequest.text();
       } else if (
-        requestContentType.includes('application/x-www-form-urlencoded') ||
-        requestContentType.includes('multipart/form-data')
+        requestContentType.includes("application/x-www-form-urlencoded") ||
+        requestContentType.includes("multipart/form-data")
       ) {
         const formData = await clonedRequest.formData();
         const formObject: Record<string, unknown> = {};
@@ -63,22 +62,22 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
         requestBody = formObject;
       }
     } catch {
-      requestBody = '[unable to read body]';
+      requestBody = "[unable to read body]";
     }
 
     // Parse response body AFTER next()
     const clonedResponse = c.res.clone();
-    const responseContentType = clonedResponse.headers.get('content-type') ?? '';
+    const responseContentType = clonedResponse.headers.get("content-type") ?? "";
     let responseBody: unknown;
 
     try {
-      if (responseContentType.includes('application/json')) {
+      if (responseContentType.includes("application/json")) {
         responseBody = await clonedResponse.json();
-      } else if (responseContentType.includes('text/')) {
+      } else if (responseContentType.includes("text/")) {
         responseBody = await clonedResponse.text();
       }
     } catch {
-      responseBody = '[unable to read body]';
+      responseBody = "[unable to read body]";
     }
 
     const status = caughtError != null ? 500 : clonedResponse.status;
@@ -86,7 +85,7 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
     const logData: Record<string, unknown> = {
       status,
       content_type: responseContentType,
-      req_id: c.get('requestId'),
+      req_id: c.get("requestId"),
       method: c.req.method,
       url: c.req.path,
       params: c.req.param(),
@@ -103,11 +102,11 @@ export function httpLoggingMiddleware(): MiddlewareHandler {
       const err = caughtError instanceof Error ? caughtError : new Error(String(caughtError));
       container.logger.error(
         { ...logData, err: { message: err.message, stack: err.stack } },
-        'Request error',
+        "Request error",
       );
       throw err;
     }
 
-    container.logger.info(logData, 'Response sent');
+    container.logger.info(logData, "Response sent");
   };
 }

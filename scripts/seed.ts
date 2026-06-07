@@ -5,37 +5,37 @@
  * Usage: pnpm tsx scripts/seed.ts
  */
 
-const BASE_URL = 'http://localhost:7878';
+const BASE_URL = "http://localhost:7878";
 
 const pets = [
   {
-    name: 'Nabi',
+    name: "Nabi",
     status: 1,
-    category: { name: 'Cat' },
-    tags: [{ name: 'cute' }, { name: 'indoor' }],
-    photoUrls: ['http://localhost:7878/static/cat.jpg'],
+    category: { name: "Cat" },
+    tags: [{ name: "cute" }, { name: "indoor" }],
+    photoUrls: ["http://localhost:7878/static/cat.jpg"],
   },
   {
-    name: 'Mong',
+    name: "Mong",
     status: 1,
-    category: { name: 'Dog' },
-    tags: [{ name: 'friendly' }, { name: 'outdoor' }],
-    photoUrls: ['http://localhost:7878/static/dog.jpg'],
+    category: { name: "Dog" },
+    tags: [{ name: "friendly" }, { name: "outdoor" }],
+    photoUrls: ["http://localhost:7878/static/dog.jpg"],
   },
   {
-    name: 'Toki',
+    name: "Toki",
     status: 1,
-    category: { name: 'Rabbit' },
-    tags: [{ name: 'cute' }, { name: 'indoor' }],
-    photoUrls: ['http://localhost:7878/static/rabbit.jpg'],
+    category: { name: "Rabbit" },
+    tags: [{ name: "cute" }, { name: "indoor" }],
+    photoUrls: ["http://localhost:7878/static/rabbit.jpg"],
   },
 ];
 
 async function seed() {
   for (const pet of pets) {
     const response = await fetch(`${BASE_URL}/pet`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(pet),
     });
 

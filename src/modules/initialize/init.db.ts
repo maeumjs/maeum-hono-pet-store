@@ -1,60 +1,57 @@
-import { drizzle } from 'drizzle-orm/mysql2'; // mysql2용 drizzle
-import { orThrow } from 'my-easy-fp';
-import mysql from 'mysql2/promise'; // mysql2 드라이버
-
-import { applyRequestIdCommentMiddleware } from '#/modules/database/request.id.comment.middleware';
-import { ConfigurationError } from '#/modules/error/configuration.error';
-import { loggerRepository } from '#/repository/logger/logger.respository';
+import type { MySql2Database } from "drizzle-orm/mysql2"; // 타입 변경
+import { drizzle } from "drizzle-orm/mysql2"; // mysql2용 drizzle
+import { orThrow } from "my-easy-fp";
+import mysql from "mysql2/promise"; // mysql2 드라이버
+import { applyRequestIdCommentMiddleware } from "#/modules/database/request.id.comment.middleware";
+import { ConfigurationError } from "#/modules/error/configuration.error";
+import type { initLog } from "#/modules/initialize/init.log";
+import { loggerRepository } from "#/repository/logger/logger.respository";
 // eslint-disable-next-line import-x/no-namespace
-import * as schema from '#/schema/database/schema.drizzle';
-
-import type { MySql2Database } from 'drizzle-orm/mysql2'; // 타입 변경
-
-import type { initLog } from '#/modules/initialize/init.log';
+import * as schema from "#/schema/database/schema.drizzle";
 
 export async function initDb(
   logger: Awaited<ReturnType<typeof initLog>>,
 ): Promise<{ writer: MySql2Database<typeof schema>; reader: MySql2Database<typeof schema> }> {
   const host = orThrow(
     process.env.DB_PET_STORE_MASTER_HOST,
-    new ConfigurationError('Cannot found host'),
+    new ConfigurationError("Cannot found host"),
   );
   const port = parseInt(
-    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new ConfigurationError('Cannot found port')),
+    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new ConfigurationError("Cannot found port")),
     10,
   );
   const database = orThrow(
     process.env.DB_PET_STORE_MASTER_DB,
-    new ConfigurationError('Cannot found db'),
+    new ConfigurationError("Cannot found db"),
   );
   const user = orThrow(
     process.env.DB_PET_STORE_MASTER_USERNAME,
-    new ConfigurationError('Cannot found username'),
+    new ConfigurationError("Cannot found username"),
   );
   const password = orThrow(
     process.env.DB_PET_STORE_MASTER_PASSWORD,
-    new ConfigurationError('Cannot found passwordd'),
+    new ConfigurationError("Cannot found passwordd"),
   );
 
   const hostSlave = orThrow(
     process.env.DB_PET_STORE_MASTER_HOST,
-    new ConfigurationError('Cannot found host'),
+    new ConfigurationError("Cannot found host"),
   );
   const portSlave = parseInt(
-    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new ConfigurationError('Cannot found port')),
+    orThrow(process.env.DB_PET_STORE_MASTER_PORT, new ConfigurationError("Cannot found port")),
     10,
   );
   const databaseSlave = orThrow(
     process.env.DB_PET_STORE_MASTER_DB,
-    new ConfigurationError('Cannot found db'),
+    new ConfigurationError("Cannot found db"),
   );
   const userSlave = orThrow(
     process.env.DB_PET_STORE_MASTER_USERNAME,
-    new ConfigurationError('Cannot found username'),
+    new ConfigurationError("Cannot found username"),
   );
   const passwordSlave = orThrow(
     process.env.DB_PET_STORE_MASTER_PASSWORD,
-    new ConfigurationError('Cannot found passwordd'),
+    new ConfigurationError("Cannot found passwordd"),
   );
 
   // 1. mysql2 writer 커넥션 풀 생성
@@ -86,22 +83,22 @@ export async function initDb(
   // 2. Attach request ID comment middleware to pools
   const dbMiddlewareOptions = {
     logger,
-    slowQueryThresholdMs: parseInt(process.env.DB_PET_STORE_SLOW_QUERY_THRESHOLD ?? '2000', 10),
+    slowQueryThresholdMs: parseInt(process.env.DB_PET_STORE_SLOW_QUERY_THRESHOLD ?? "2000", 10),
   };
   applyRequestIdCommentMiddleware(writerPoolConnection, dbMiddlewareOptions);
   applyRequestIdCommentMiddleware(readerPoolConnection, dbMiddlewareOptions);
 
   // 3. Drizzle 인스턴스 생성 (mysql2용)
-  const writer = drizzle(writerPoolConnection, { schema, mode: 'default' });
-  const reader = drizzle(readerPoolConnection, { schema, mode: 'default' });
+  const writer = drizzle(writerPoolConnection, { schema, mode: "default" });
+  const reader = drizzle(readerPoolConnection, { schema, mode: "default" });
 
   logger.info(
     loggerRepository.process({
-      type: 'db-connect',
+      type: "db-connect",
       // 로그 데이터는 환경에 맞게 수정 (예: host 정보 추출 등)
-      sqlite3: 'mysql-database',
+      sqlite3: "mysql-database",
     }),
-    'database connect',
+    "database connect",
   );
 
   const db = { writer, reader };

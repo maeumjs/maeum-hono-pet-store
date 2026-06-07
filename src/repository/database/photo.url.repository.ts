@@ -1,25 +1,23 @@
-import fs from 'node:fs';
+import fs from "node:fs";
 
-import { eq } from 'drizzle-orm';
-import { atOrThrow, orThrow } from 'my-easy-fp';
-import pathe from 'pathe';
+import { eq } from "drizzle-orm";
+import { atOrThrow, orThrow } from "my-easy-fp";
+import pathe from "pathe";
+import type { z } from "zod";
+import { container } from "#/loader";
+import { NotFoundError } from "#/modules/error/not.found.error";
+import { uuidV7Binary } from "#/modules/uuid/uuid.buffer";
+import { photoUrls } from "#/schema/database/schema.drizzle";
 
-import { container } from '#/loader';
-import { NotFoundError } from '#/modules/error/not.found.error';
-import { uuidV7Binary } from '#/modules/uuid/uuid.buffer';
-import { photoUrls } from '#/schema/database/schema.drizzle';
-
-import type { z } from 'zod';
-
-import type { PhotoUrlSelectSchema } from '#/schema/database/schema.zod';
-import type { FileUploadSchema } from '#/schema/repository/repository.zod';
+import type { PhotoUrlSelectSchema } from "#/schema/database/schema.zod";
+import type { FileUploadSchema } from "#/schema/repository/repository.zod";
 
 async function readNullablePhotoUrlById(
   id: bigint,
-  use: keyof typeof container.db = 'reader',
+  use: keyof typeof container.db = "reader",
 ): Promise<z.infer<typeof PhotoUrlSelectSchema>[] | undefined> {
   // Drizzle ORM으로 photo url select
-  if (use == null || use === 'reader') {
+  if (use == null || use === "reader") {
     return container.db.reader.select().from(photoUrls).where(eq(photoUrls.id, id));
   }
 
@@ -28,7 +26,7 @@ async function readNullablePhotoUrlById(
 
 async function readPhotoUrlById(
   id: bigint,
-  use: keyof typeof container.db = 'reader',
+  use: keyof typeof container.db = "reader",
 ): Promise<z.infer<typeof PhotoUrlSelectSchema>> {
   // Drizzle ORM으로 photo url select
   const result = await readNullablePhotoUrlById(id, use);
@@ -39,13 +37,13 @@ export async function createPhotoUrl(
   files: z.infer<typeof FileUploadSchema>,
 ): Promise<z.infer<typeof PhotoUrlSelectSchema>> {
   const cwd = pathe.resolve(process.cwd());
-  const imagePath = pathe.join(cwd, 'public', 'images');
-  const filePath = pathe.join(cwd, 'public', 'images', files.file.name);
+  const imagePath = pathe.join(cwd, "public", "images");
+  const filePath = pathe.join(cwd, "public", "images", files.file.name);
   const photoUrl = [
-    [`http://localhost`, `${container.config.server.port}`].join(':'),
-    'static',
+    [`http://localhost`, `${container.config.server.port}`].join(":"),
+    "static",
     files.file.name,
-  ].join('/');
+  ].join("/");
 
   await fs.promises.mkdir(imagePath, { recursive: true });
   await fs.promises.writeFile(filePath, files.file.stream());
@@ -55,7 +53,7 @@ export async function createPhotoUrl(
     .values({ url: photoUrl, uuid: uuidV7Binary(), petId: BigInt(files.petId) })
     .$returningId();
   const insertedPhotoUrlId = orThrow(nullableInsertedPhotoUrlId);
-  const insertedPhotoUrl = readPhotoUrlById(insertedPhotoUrlId.id, 'writer');
+  const insertedPhotoUrl = readPhotoUrlById(insertedPhotoUrlId.id, "writer");
 
   return insertedPhotoUrl;
 }

@@ -1,18 +1,18 @@
-import { assert, describe, expect, it } from 'vitest';
+import { assert, describe, expect, it } from "vitest";
 
-import { ModifyPetRepositorySchema } from './modify.pet.repository.schema';
+import { ModifyPetRepositorySchema } from "./modify.pet.repository.schema";
 
-describe('ModifyPetRepositorySchema', () => {
-  it('should pass with partial update data - name only', () => {
+describe("ModifyPetRepositorySchema", () => {
+  it("should pass with partial update data - name only", () => {
     const validData = {
-      name: 'Modified Pet',
+      name: "Modified Pet",
     };
 
     const result = ModifyPetRepositorySchema.safeParse(validData);
     expect(result.success).toBe(true);
   });
 
-  it('should pass with partial update data - status only', () => {
+  it("should pass with partial update data - status only", () => {
     const validData = {
       status: 1,
     };
@@ -21,7 +21,7 @@ describe('ModifyPetRepositorySchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should pass with partial update data - category only', () => {
+  it("should pass with partial update data - category only", () => {
     const validData = {
       category: { id: 1n },
     };
@@ -30,49 +30,49 @@ describe('ModifyPetRepositorySchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should pass with partial update data - tags only', () => {
+  it("should pass with partial update data - tags only", () => {
     const validData = {
-      tags: [{ name: 'modified' }],
+      tags: [{ name: "modified" }],
     };
 
     const result = ModifyPetRepositorySchema.safeParse(validData);
     expect(result.success).toBe(true);
   });
 
-  it('should pass with partial update data - photoUrls only', () => {
+  it("should pass with partial update data - photoUrls only", () => {
     const validData = {
-      photoUrls: ['http://example.com/modified.jpg'],
+      photoUrls: ["http://example.com/modified.jpg"],
     };
 
     const result = ModifyPetRepositorySchema.safeParse(validData);
     expect(result.success).toBe(true);
   });
 
-  it('should pass with multiple partial fields', () => {
+  it("should pass with multiple partial fields", () => {
     const validData = {
-      name: 'Partially Modified',
+      name: "Partially Modified",
       status: 2,
-      tags: [{ id: 1n }, { name: 'partial' }],
+      tags: [{ id: 1n }, { name: "partial" }],
     };
 
     const result = ModifyPetRepositorySchema.safeParse(validData);
     expect(result.success).toBe(true);
   });
 
-  it('should pass with all fields provided', () => {
+  it("should pass with all fields provided", () => {
     const validData = {
-      name: 'Fully Modified',
+      name: "Fully Modified",
       status: 1,
-      category: { name: 'Modified Category' },
+      category: { name: "Modified Category" },
       tags: [{ id: 1n }],
-      photoUrls: ['http://example.com/full.jpg'],
+      photoUrls: ["http://example.com/full.jpg"],
     };
 
     const result = ModifyPetRepositorySchema.safeParse(validData);
     expect(result.success).toBe(true);
   });
 
-  it('should fail when no fields are provided (empty object)', () => {
+  it("should fail when no fields are provided (empty object)", () => {
     const invalidData = {};
 
     const result = ModifyPetRepositorySchema.safeParse(invalidData);
@@ -80,11 +80,11 @@ describe('ModifyPetRepositorySchema', () => {
     if (!result.success) {
       const firstIssue = result.error.issues[0];
       assert(firstIssue);
-      expect(firstIssue.message).toBe('At least one field must be provided');
+      expect(firstIssue.message).toBe("At least one field must be provided");
     }
   });
 
-  it('should fail when all fields are undefined', () => {
+  it("should fail when all fields are undefined", () => {
     const invalidData = {
       name: undefined,
       status: undefined,
@@ -98,11 +98,11 @@ describe('ModifyPetRepositorySchema', () => {
     if (!result.success) {
       const firstIssue = result.error.issues[0];
       assert(firstIssue);
-      expect(firstIssue.message).toBe('At least one field must be provided');
+      expect(firstIssue.message).toBe("At least one field must be provided");
     }
   });
 
-  it('should fail when category is provided but invalid', () => {
+  it("should fail when category is provided but invalid", () => {
     const invalidData = {
       category: {},
     };
@@ -111,7 +111,7 @@ describe('ModifyPetRepositorySchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should fail when tag is provided but invalid', () => {
+  it("should fail when tag is provided but invalid", () => {
     const invalidData = {
       tags: [{}],
     };
