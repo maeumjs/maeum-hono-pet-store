@@ -26,38 +26,7 @@ await esbuild.build({
   sourcemap: true,
   platform: "node",
   minify: process.env.MINIFY === "true",
-  outdir: "dist",
+  outdir: "dist/src",
   format: process.env.FORMAT,
   preserveSymlinks: false,
-
-  plugins: [
-    {
-      name: "path-alias-resolver",
-      setup(build) {
-        // Resolve path aliases (#/* -> relative imports)
-        build.onResolve({ filter: /^#\// }, (args) => {
-          const targetPath = args.path.replace(/^#\//, "");
-
-          // Calculate relative path from importer to target
-          if (args.importer) {
-            const importerDir = args.importer.replace("src/", "").split("/").slice(0, -1);
-
-            // Calculate how many directories to go up
-            const upLevels = importerDir.length;
-            const prefix = upLevels > 0 ? "../".repeat(upLevels) : "./";
-
-            return {
-              path: `${prefix}${targetPath}.js`,
-              external: false,
-            };
-          }
-
-          return {
-            path: `./${targetPath}.js`,
-            external: false,
-          };
-        });
-      },
-    },
-  ],
 });
