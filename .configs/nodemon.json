@@ -7,7 +7,7 @@
     "resources/locales/**/*.json",
     "!src/dto/**/*.ts"
   ],
-  "exec": "tsx --tsconfig tsconfig.json --import src/loader.ts src/app.ts",
+  "exec": "pnpm run dev-script",
   "ext": "ts json env",
   "ignore": ["*.test.ts"],
   "delay": "1500ms",

@@ -1,6 +1,25 @@
 {
   "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.formatOnSave": true
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "files.exclude": {
     "**/.git": true,
@@ -38,7 +57,7 @@
     "source.fixAll.biome": "explicit",
     "source.organizeImports.biome": "explicit"
   },
-  "formattingToggle.affects": ["editor.formatOnSave"],
+  "prettier.enable": false,
   "files.insertFinalNewline": true,
   "js/ts.tsdk.path": "node_modules/typescript/lib"
 }
